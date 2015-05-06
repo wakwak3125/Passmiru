@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.inject(this);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setTitle("passmiru");
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
         tabStrip.setDividerColor(getResources().getColor(android.R.color.transparent));

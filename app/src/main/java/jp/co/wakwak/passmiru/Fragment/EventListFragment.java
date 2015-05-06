@@ -3,39 +3,44 @@ package jp.co.wakwak.passmiru.Fragment;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
+import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.EventListAdapter;
-import jp.co.wakwak.passmiru.ApiManage.ConnpassParser;
-import jp.co.wakwak.passmiru.ApiManage.ConnpassRequests;
-import jp.co.wakwak.passmiru.Bus.ShowListEvent;
+import jp.co.wakwak.passmiru.ApiManage.EventsRequest;
+import jp.co.wakwak.passmiru.Bus.VolleySuccessEvent;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.Event;
 import jp.co.wakwak.passmiru.R;
 
-public class EventListFragment extends ListFragment {
+public class EventListFragment extends ListFragment implements AbsListView.OnScrollListener {
+
+    final static String TAG = EventListFragment.class.getSimpleName();
 
     private OnFragmentInteractionListener mListener;
-    private ConnpassRequests connpassRequests;
-    private ConnpassParser connpassParser;
-    private EventListAdapter eventListAdapter;
-    private List<Event> eventList;
+
+    private EventsRequest eventsRequest;
+
+    private ArrayList<Event> events;
+    private EventListAdapter adapter;
+    private ListView mListView;
+    private View mFooter;
+
+    private int start;
+
+    private boolean loading = true;
+    private int previousTotal = 0;
 
     static final int INTERNAL_PROGRESS_CONTAINER_ID = 0x00ff0002;
     static final int INTERNAL_LIST_CONTAINER_ID = 0x00ff0003;
@@ -63,45 +68,60 @@ public class EventListFragment extends ListFragment {
         FrameLayout frameLayout = (FrameLayout) listview.getParent();
         frameLayout.setId(INTERNAL_LIST_CONTAINER_ID);
 
+        mFooter = inflater.inflate(R.layout.listfooter, container, false);
+
         return view;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        eventListAdapter = new EventListAdapter(getActivity());
-        ListView list = (ListView)getView().findViewById(android.R.id.list);
-        list.setAdapter(eventListAdapter);
-        ConnpassRequests.getInstance().
-                getEvents(
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    List<Event> events = ConnpassParser.getInstance().EventParser(response);
-                                    eventListAdapter.swap(events);
-                                    setListShown(true);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
 
-                            }
-                        });
+        Log.d(TAG, "onActivityCreated");
+
+        events = new ArrayList<Event>();
+
+        adapter = new EventListAdapter(getActivity(), events);
+        setListAdapter(adapter);
+
+        setListShown(false);
+
+        getListView().addFooterView(mFooter);
+        getListView().setOnScrollListener(this);
+        getListView().setDividerHeight(8);
+
+        eventsRequest = new EventsRequest(adapter);
+        eventsRequest.getEvents(1, 3);
     }
 
-    public void onEvent(ShowListEvent event) {
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-        if (event.isSuccess()) {
-            setListShown(true);
-        } else {
-            Toast.makeText(AppController.getmContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+        // 初回アイテム追加時のメソッドコール防止(暫定)
+        if (adapter == null || totalItemCount == 1) {
+            return;
         }
+
+        if (loading) {
+            if (totalItemCount > previousTotal) {
+                Log.d(TAG, "totalItemCount   = " + totalItemCount);
+                Log.d(TAG, "previousTotal = " + previousTotal);
+                previousTotal = totalItemCount;
+                loading = false;
+            }
+        }
+        if (!loading && totalItemCount == visibleItemCount + firstVisibleItem) {
+            Log.d("onScroll", "Loading......");
+            int start = adapter.getCount() + 1;
+            eventsRequest = new EventsRequest(adapter);
+            eventsRequest.getEvents(start, 3);
+            loading = true;
+        }
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
     }
 
     @Override
@@ -126,7 +146,19 @@ public class EventListFragment extends ListFragment {
         super.onListItemClick(l, v, position, id);
 
     }
+
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(String id);
     }
+
+    public void onEvent(VolleySuccessEvent event) {
+
+        if (event.isSuccess()) {
+            setListShown(true);
+        } else {
+            Toast.makeText(AppController.getmContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 }

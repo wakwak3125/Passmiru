@@ -1,14 +1,13 @@
 package jp.co.wakwak.passmiru.Adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import jp.co.wakwak.passmiru.Data.Event;
 import jp.co.wakwak.passmiru.R;
@@ -20,11 +19,8 @@ public class EventListAdapter extends ArrayAdapter<Event> {
 
     final static String TAG = EventListAdapter.class.getSimpleName();
 
-    private Context context;
-
-    public EventListAdapter(Context context) {
-        super(context, R.layout.listrow);
-        this.context = context;
+    public EventListAdapter(Context context, ArrayList<Event> events) {
+        super(context, R.layout.listrow, events);
     }
 
     @Override
@@ -37,19 +33,18 @@ public class EventListAdapter extends ArrayAdapter<Event> {
         TextView mTitle = (TextView)convertView.findViewById(R.id.title);
 
         Event event = getItem(position);
-        mEvent_id.setText(String.valueOf(event.getId()));
-        mTitle.setText(event.getTitle());
 
-        Log.d(TAG, "ITEM AT ADAPTER = " + event.getTitle());
+        mEvent_id.setText(String.valueOf(event.getEvent_id()));
+        mTitle.setText(event.getTitle());
 
         return convertView;
     }
 
-    public void swap(List<Event> objects) {
+    /*public void swap(List<Event> objects) {
         clear();
         for (Event event : objects) {
             add(event);
         }
         notifyDataSetChanged();
-    }
+    }*/
 }
