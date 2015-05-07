@@ -1,6 +1,5 @@
 package jp.co.wakwak.passmiru.ApiManage;
 
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.EventListAdapter;
-import jp.co.wakwak.passmiru.Bus.VolleySuccessEvent;
+import jp.co.wakwak.passmiru.Bus.ListShowBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.Event;
 
@@ -35,13 +34,11 @@ public class EventsRequest {
     }
 
     // 引数のstartは検索の出力開始位置(例:1であれば1件目から出力する)
-    // order 1 2 3
+    // orderには1,2,3のどれかを渡す。説明はリファレンスページで確認。
     public void getEvents(int start, int order) {
 
         events = new ArrayList<Event>();
-
         String url = "http://connpass.com/api/v1/event/?start=" + start + "&order=" + order + "&count=10";
-        Log.d(TAG, "URL = " + url);
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
@@ -60,10 +57,9 @@ public class EventsRequest {
                                 event.setTitle(title);
 
                                 events.add(event);
-
                             }
                             adapter.addAll(events);
-                            EventBus.getDefault().post(new VolleySuccessEvent(true));
+                            EventBus.getDefault().post(new ListShowBus(true));
 
                         } catch (JSONException e) {
                             e.printStackTrace();

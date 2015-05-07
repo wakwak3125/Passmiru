@@ -1,52 +1,45 @@
 package jp.co.wakwak.passmiru;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.astuetz.PagerSlidingTabStrip;
+import android.widget.TextView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import jp.co.wakwak.passmiru.Adapter.PagerAdapter;
-import jp.co.wakwak.passmiru.Fragment.EventListFragment;
-import jp.co.wakwak.passmiru.Fragment.UserEventFragment;
 
 
-public class MainActivity extends AppCompatActivity
-        implements EventListFragment.OnFragmentInteractionListener, UserEventFragment.OnFragmentInteractionListener {
+public class EventDetailActivity extends AppCompatActivity {
 
-    private PagerAdapter pagerAdapter;
+    Intent intent;
 
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.pager)
-    ViewPager pager;
-    @InjectView(R.id.tabs)
-    PagerSlidingTabStrip tabStrip;
+    @InjectView(R.id.description)
+    TextView mDescription;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_event_detail);
         ButterKnife.inject(this);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setTitle("passmiru");
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
-        tabStrip.setDividerColor(getResources().getColor(android.R.color.transparent));
-        tabStrip.setViewPager(pager);
 
+        intent = getIntent();
+        String description = intent.getStringExtra("description");
+        mDescription.setText(description);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_event_detail, menu);
         return true;
     }
 
@@ -61,12 +54,6 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onFragmentInteraction(String id) {
-
     }
 }

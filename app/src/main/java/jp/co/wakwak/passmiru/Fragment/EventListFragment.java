@@ -1,6 +1,7 @@
 package jp.co.wakwak.passmiru.Fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -18,10 +19,13 @@ import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.EventListAdapter;
+import jp.co.wakwak.passmiru.ApiManage.EventDetailRequest;
 import jp.co.wakwak.passmiru.ApiManage.EventsRequest;
-import jp.co.wakwak.passmiru.Bus.VolleySuccessEvent;
+import jp.co.wakwak.passmiru.Bus.EventDetailBus;
+import jp.co.wakwak.passmiru.Bus.ListShowBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.Event;
+import jp.co.wakwak.passmiru.EventDetailActivity;
 import jp.co.wakwak.passmiru.R;
 
 public class EventListFragment extends ListFragment implements AbsListView.OnScrollListener {
@@ -31,6 +35,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     private OnFragmentInteractionListener mListener;
 
     private EventsRequest eventsRequest;
+    private EventDetailRequest eventDetailRequest;
 
     private ArrayList<Event> events;
     private EventListAdapter adapter;
@@ -92,6 +97,8 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
 
         eventsRequest = new EventsRequest(adapter);
         eventsRequest.getEvents(1, 3);
+
+        eventDetailRequest = new EventDetailRequest();
     }
 
     @Override
@@ -144,6 +151,9 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+        Event event = (Event)l.getItemAtPosition(position);
+        int eventID = event.getEvent_id();
+        eventDetailRequest.getEventDetail(eventID);
 
     }
 
@@ -151,7 +161,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
         void onFragmentInteraction(String id);
     }
 
-    public void onEvent(VolleySuccessEvent event) {
+    public void onEvent(ListShowBus event) {
 
         if (event.isSuccess()) {
             setListShown(true);
@@ -160,5 +170,17 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
         }
     }
 
+    public void onEvent(EventDetailBus detailBus) {
+        if (detailBus.isSuccess()) {
+            String description = detailBus.getDescription();
+
+            Intent intent = new Intent(AppController.getmContext(), EventDetailActivity.class);
+            intent.putExtra("description", description);
+            startActivity(intent);
+
+        } else {
+            Toast.makeText(AppController.getmContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }
