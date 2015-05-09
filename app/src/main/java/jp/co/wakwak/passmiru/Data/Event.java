@@ -8,11 +8,22 @@ public class Event {
     public int      event_id;
     public String   title;
     public String   event_url;
+    public String   updated_at;
+    public String   limit;
+    public String   accepted;
+    public String   owner_nickname;
+    public String   imgUrl;
 
-    public Event(int id, String title, String event_url) {
+    public Event(int id, String title, String event_url, String updated_at, String limit, String accepted, String owner_nickname, String imgUrl) {
         this.event_id = id;
         this.title = title;
         this.event_url = event_url;
+        this.updated_at = updated_at;
+        this.limit = limit;
+        this.accepted = accepted;
+        this.owner_nickname = owner_nickname;
+        this.imgUrl = imgUrl;
+
     }
 
     public Event() {
@@ -41,5 +52,45 @@ public class Event {
 
     public void setEvent_url(String event_url) {
         this.event_url = event_url;
+    }
+
+    public String getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public String getLimit() {
+        return limit;
+    }
+
+    public void setLimit(String limit) {
+        this.limit = limit;
+    }
+
+    public String getAccepted() {
+        return accepted;
+    }
+
+    public void setAccepted(String accepted) {
+        this.accepted = accepted;
+    }
+
+    public String getOwner_nickname() {
+        return owner_nickname;
+    }
+
+    public void setOwner_nickname(String owner_nickname) {
+        this.owner_nickname = owner_nickname;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 }

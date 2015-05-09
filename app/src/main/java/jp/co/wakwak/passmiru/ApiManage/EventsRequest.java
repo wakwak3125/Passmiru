@@ -1,5 +1,6 @@
 package jp.co.wakwak.passmiru.ApiManage;
 
+import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -10,7 +11,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
@@ -28,6 +33,7 @@ public class EventsRequest {
 
     private EventListAdapter adapter;
     private ArrayList<Event> events;
+    private Event event;
 
     public EventsRequest(EventListAdapter adapter) {
         this.adapter = adapter;
@@ -46,27 +52,26 @@ public class EventsRequest {
                     public void onResponse(JSONObject response) {
                         try {
                             JSONArray connpassEvents = response.getJSONArray("events");
-                            for(int i = 0; i < connpassEvents.length(); i++){
+                            for (int i = 0; i < connpassEvents.length(); i++) {
                                 JSONObject connpassEvent = connpassEvents.getJSONObject(i);
 
                                 int event_id = connpassEvent.getInt("event_id");
                                 String title = connpassEvent.getString("title");
                                 String event_url = connpassEvent.getString("event_url");
+                                String limit = connpassEvent.getString("limit");
+                                String accepted = connpassEvent.getString("accepted");
+                                String owner_nickname = connpassEvent.getString("owner_nickname");
 
-                                // これやると絶対落ちるで。(あたりまえ)
-                                /*try {
-                                    Document document = Jsoup.connect(event_url).get();
-                                    Elements elements = document.select("meta[itemprop=image]");
-                                    String imageUrl = elements.select("content").first().toString();
-                                    Log.d(TAG, "imageUrl = " + imageUrl);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }*/
-
-                                Event event = new Event();
+                                event = new Event();
                                 event.setEvent_id(event_id);
                                 event.setTitle(title);
                                 event.setEvent_url(event_url);
+                                event.setLimit(limit);
+                                event.setAccepted(accepted);
+                                event.setOwner_nickname(owner_nickname);
+
+                                HtmlParseTask task = new HtmlParseTask(adapter, events, event, event_url);
+                                task.execute();
 
                                 events.add(event);
                             }
@@ -86,5 +91,40 @@ public class EventsRequest {
                     }
                 });
         AppController.getInstance().addToRequestQueue(request);
+    }
+
+    // イベントのURLからイベントイメージURLを取得するクラス
+    private class HtmlParseTask extends AsyncTask<Void, Void, String> {
+        private EventListAdapter adapter;
+        private Event event;
+        private ArrayList<Event> events;
+        private String eventUrl;
+
+        public HtmlParseTask(EventListAdapter adapter, ArrayList<Event> events, Event event, String eventUrl) {
+            this.adapter = adapter;
+            this.events = events;
+            this.event = event;
+            this.eventUrl = eventUrl;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String imgUrl = null;
+
+            try {
+                Document document = Jsoup.connect(eventUrl).get();
+                Elements elements = document.select("meta[itemprop=image]");
+                imgUrl = elements.attr("content");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            event.setImgUrl(imgUrl);
+            return imgUrl;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
     }
 }

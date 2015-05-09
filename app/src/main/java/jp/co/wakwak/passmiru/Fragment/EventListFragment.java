@@ -91,7 +91,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
 
         setListShown(false);
 
-        getListView().addFooterView(mFooter);
+        getListView().addFooterView(mFooter, null, false);
         getListView().setOnScrollListener(this);
 
         eventsRequest = new EventsRequest(adapter);

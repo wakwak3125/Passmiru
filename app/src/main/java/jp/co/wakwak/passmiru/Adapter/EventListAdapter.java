@@ -1,12 +1,15 @@
 package jp.co.wakwak.passmiru.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -45,6 +48,7 @@ public class EventListAdapter extends ArrayAdapter<Event> {
         ViewHolder(View view) {
             ButterKnife.inject(this, view);
         }
+
     }
 
     public EventListAdapter(Context context, ArrayList<Event> events) {
@@ -59,25 +63,33 @@ public class EventListAdapter extends ArrayAdapter<Event> {
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else {
-            holder = (ViewHolder)convertView.getTag();
+            holder = (ViewHolder) convertView.getTag();
         }
 
         Event event = getItem(position);
 
-
-        // これをバックグラウンド処理にする
-        /*try {
-            Document document = Jsoup.connect(event.getEvent_url()).get();
-            Elements elements = document.select("meta[itemprop=image]");
-            String imageUrl = elements.select("content").first().toString();
-            Picasso.with(getContext()).load(imageUrl).into(holder.listImage);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+        String limit = event.getLimit();
 
         holder.title.setText(event.getTitle());
+        if (limit.equals("null")) {
+            holder.limit.setText(null);
+        } else {
+            holder.limit.setText(limit);
+        }
+
+        /*if (limit.equals(event.getAccepted())) {
+            holder.accepted.setTextColor(convertView.getResources().getColor(R.color.primary));
+        }*/
+
+        holder.accepted.setText(event.getAccepted());
+        holder.ownerNickname.setText(event.getOwner_nickname());
+
+        Log.d(TAG, "imgUrl = " + event.getImgUrl());
+
+        Picasso.with(getContext()).load(event.getImgUrl()).into(holder.listImage);
 
         return convertView;
+
     }
 
     /*public void swap(List<Event> objects) {
