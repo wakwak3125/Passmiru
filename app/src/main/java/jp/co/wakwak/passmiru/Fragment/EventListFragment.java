@@ -93,7 +93,6 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
 
         getListView().addFooterView(mFooter);
         getListView().setOnScrollListener(this);
-        getListView().setDividerHeight(8);
 
         eventsRequest = new EventsRequest(adapter);
         eventsRequest.getEvents(1, 3);

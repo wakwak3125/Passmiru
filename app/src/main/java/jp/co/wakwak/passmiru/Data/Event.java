@@ -7,10 +7,12 @@ public class Event {
 
     public int      event_id;
     public String   title;
+    public String   event_url;
 
-    public Event(int id, String title) {
+    public Event(int id, String title, String event_url) {
         this.event_id = id;
         this.title = title;
+        this.event_url = event_url;
     }
 
     public Event() {
@@ -31,5 +33,13 @@ public class Event {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getEvent_url() {
+        return event_url;
+    }
+
+    public void setEvent_url(String event_url) {
+        this.event_url = event_url;
     }
 }

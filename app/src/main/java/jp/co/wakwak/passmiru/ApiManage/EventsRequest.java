@@ -51,10 +51,22 @@ public class EventsRequest {
 
                                 int event_id = connpassEvent.getInt("event_id");
                                 String title = connpassEvent.getString("title");
+                                String event_url = connpassEvent.getString("event_url");
+
+                                // これやると絶対落ちるで。(あたりまえ)
+                                /*try {
+                                    Document document = Jsoup.connect(event_url).get();
+                                    Elements elements = document.select("meta[itemprop=image]");
+                                    String imageUrl = elements.select("content").first().toString();
+                                    Log.d(TAG, "imageUrl = " + imageUrl);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }*/
 
                                 Event event = new Event();
                                 event.setEvent_id(event_id);
                                 event.setTitle(title);
+                                event.setEvent_url(event_url);
 
                                 events.add(event);
                             }
