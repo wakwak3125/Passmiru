@@ -60,7 +60,7 @@ public class UserEventFragment extends Fragment {
         if (userEventBus.isSuccess()){
             mTitle.setText(userEventBus.getEventTitle());
         } else {
-            Toast.makeText(AppController.getmContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
         }
     }
 

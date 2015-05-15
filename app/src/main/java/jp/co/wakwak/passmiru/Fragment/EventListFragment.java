@@ -101,6 +101,37 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+
+    @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
         // 初回アイテム追加時のメソッドコール防止(暫定)
@@ -152,7 +183,8 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
         super.onListItemClick(l, v, position, id);
         Event event = (Event)l.getItemAtPosition(position);
         int eventID = event.getEvent_id();
-        eventDetailRequest.getEventDetail(eventID);
+        String imgUrl = event.getImgUrl();
+        eventDetailRequest.getEventDetail(eventID, imgUrl);
 
     }
 
@@ -165,20 +197,27 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
         if (event.isSuccess()) {
             setListShown(true);
         } else {
-            Toast.makeText(AppController.getmContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void onEvent(EventDetailBus detailBus) {
         if (detailBus.isSuccess()) {
             String description = detailBus.getDescription();
+            String imgUrl = detailBus.getImgUrl();
+            String title = detailBus.getEventTitle();
+            String updated_at = detailBus.getUpdated_at();
 
-            Intent intent = new Intent(AppController.getmContext(), EventDetailActivity.class);
+            Intent intent = new Intent(AppController.getContext(), EventDetailActivity.class);
             intent.putExtra("description", description);
+            intent.putExtra("imgUrl", imgUrl);
+            intent.putExtra("title", title);
+            intent.putExtra("updated_at", updated_at);
+
             startActivity(intent);
 
         } else {
-            Toast.makeText(AppController.getmContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
         }
     }
 

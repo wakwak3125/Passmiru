@@ -18,7 +18,7 @@ import jp.co.wakwak.passmiru.Commons.AppController;
 public class EventDetailRequest {
     final static String TAG = EventDetailRequest.class.getSimpleName();
 
-    public void getEventDetail(int event_id) {
+    public void getEventDetail(int event_id, final String imgUrl) {
 
         String url = "http://connpass.com/api/v1/event/?event_id=" + event_id;
 
@@ -35,9 +35,9 @@ public class EventDetailRequest {
                                 int eventId = event.getInt("event_id");
                                 String eventTitle = event.getString("title");
                                 String description = event.getString("description");
+                                String updated_at = event.getString("updated_at");
 
-                                EventBus.getDefault().post(new EventDetailBus(true, eventId, eventTitle, description));
-
+                                EventBus.getDefault().post(new EventDetailBus(true, eventId, eventTitle, description, imgUrl, updated_at));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

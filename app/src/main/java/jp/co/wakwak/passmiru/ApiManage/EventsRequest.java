@@ -61,6 +61,7 @@ public class EventsRequest {
                                 String limit = connpassEvent.getString("limit");
                                 String accepted = connpassEvent.getString("accepted");
                                 String owner_nickname = connpassEvent.getString("owner_nickname");
+                                String updated_at = connpassEvent.getString("updated_at");
 
                                 event = new Event();
                                 event.setEvent_id(event_id);
@@ -69,25 +70,24 @@ public class EventsRequest {
                                 event.setLimit(limit);
                                 event.setAccepted(accepted);
                                 event.setOwner_nickname(owner_nickname);
+                                event.setUpdated_at(updated_at);
 
-                                HtmlParseTask task = new HtmlParseTask(adapter, events, event, event_url);
+                                HtmlParseTask task = new HtmlParseTask(event, event_url, adapter);
                                 task.execute();
 
                                 events.add(event);
                             }
                             adapter.addAll(events);
                             EventBus.getDefault().post(new ListShowBus(true));
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(AppController.getmContext(), "取得できませんでした", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AppController.getContext(), "取得できませんでした", Toast.LENGTH_SHORT).show();
                     }
                 });
         AppController.getInstance().addToRequestQueue(request);
@@ -95,36 +95,32 @@ public class EventsRequest {
 
     // イベントのURLからイベントイメージURLを取得するクラス
     private class HtmlParseTask extends AsyncTask<Void, Void, String> {
-        private EventListAdapter adapter;
         private Event event;
-        private ArrayList<Event> events;
         private String eventUrl;
+        private EventListAdapter adapter;
 
-        public HtmlParseTask(EventListAdapter adapter, ArrayList<Event> events, Event event, String eventUrl) {
-            this.adapter = adapter;
-            this.events = events;
+        public HtmlParseTask(Event event, String eventUrl, EventListAdapter adapter) {
             this.event = event;
             this.eventUrl = eventUrl;
+            this.adapter = adapter;
         }
-
         @Override
         protected String doInBackground(Void... params) {
             String imgUrl = null;
-
             try {
                 Document document = Jsoup.connect(eventUrl).get();
                 Elements elements = document.select("meta[itemprop=image]");
                 imgUrl = elements.attr("content");
+                event.setImgUrl(imgUrl);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            event.setImgUrl(imgUrl);
             return imgUrl;
         }
-
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(String imgUrl) {
+            super.onPostExecute(imgUrl);
+            adapter.notifyDataSetChanged();
         }
     }
 }

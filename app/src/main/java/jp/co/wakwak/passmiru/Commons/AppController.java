@@ -34,7 +34,7 @@ public class AppController extends Application {
         super.onTerminate();
     }
 
-    public static Context getmContext() {
+    public static Context getContext() {
         return mContext;
     }
 

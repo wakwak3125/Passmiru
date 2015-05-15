@@ -7,12 +7,16 @@ public class EventDetailBus {
     private int eventId;
     private String eventTitle;
     private String description;
+    private String imgUrl;
+    private String updated_at;
 
-    public EventDetailBus(boolean success, int eventId, String eventTitle, String description) {
+    public EventDetailBus(boolean success, int eventId, String eventTitle, String description, String imgUrl, String updated_at) {
         this.success = success;
         this.eventId = eventId;
         this.eventTitle = eventTitle;
         this.description = description;
+        this.imgUrl = imgUrl;
+        this.updated_at = updated_at;
     }
 
     public boolean isSuccess() {
@@ -45,5 +49,21 @@ public class EventDetailBus {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public String getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
     }
 }
