@@ -1,21 +1,36 @@
 package jp.co.wakwak.passmiru;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.nineoldandroids.view.ViewHelper;
 import com.squareup.picasso.Picasso;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -24,15 +39,32 @@ import butterknife.InjectView;
 public class EventDetailActivity extends AppCompatActivity implements ObservableScrollViewCallbacks {
 
     Intent intent;
-
     private int mParallaxImageHeight;
+    private Double lat;
+    private Double lon;
 
+    @InjectView(R.id.title)
+    TextView mTitle;
+    @InjectView(R.id.catchMsg)
+    TextView mCatchMsg;
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
     @InjectView(R.id.eventImage)
     ImageView mEventImage;
     @InjectView(R.id.webView)
     WebView mWebView;
+    @InjectView(R.id.startAt)
+    TextView mStartAt;
+    @InjectView(R.id.address)
+    TextView mAddress;
+    @InjectView(R.id.place)
+    TextView mPlace;
+    @InjectView(R.id.owner_id)
+    TextView mOwnerId;
+    @InjectView(R.id.hashTag)
+    TextView mHashTag;
+    @InjectView(R.id.ownerNickName)
+    TextView mOwnerNickName;
     @InjectView(R.id.scroll)
     ObservableScrollView mScrollView;
 
@@ -46,7 +78,17 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         String description = intent.getStringExtra("description");
         String imgUrl = intent.getStringExtra("imgUrl");
         String title = intent.getStringExtra("title");
-        String updated_at = intent.getStringExtra("upsated_at");
+        String updated_at = intent.getStringExtra("updated_at");
+        String catchMsg = intent.getStringExtra("catch");
+        String place = intent.getStringExtra("eventPlace");
+        String sLat = intent.getStringExtra("lat");
+        String sLon = intent.getStringExtra("lon");
+        String startedAt = intent.getStringExtra("startedAt");
+        String address = intent.getStringExtra("address");
+        String ownerNickName = intent.getStringExtra("ownerNickName");
+        String ownerDisplayName = intent.getStringExtra("ownerDisplayName");
+        final String hashTag = intent.getStringExtra("hashTag");
+
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(title);
@@ -59,10 +101,94 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
 
         Picasso.with(this).load(imgUrl).into(mEventImage);
 
+        // 各アイテムをViewにセット
+        mTitle.setText(title);
+        mCatchMsg.setText(catchMsg);
+        mPlace.setText(place);
+        mStartAt.setText(startedAt);
+        mAddress.setText(address);
+        mOwnerId.setText(ownerNickName);
+        mOwnerNickName.setText(" (" + ownerDisplayName + ")");
+
+        // ハッシュタグリンクの生成
+        mHashTag.setText(hashTag);
+        Pattern pattern = Pattern.compile(hashTag);
+        final String hashTagLink = "http://twitter.com/search?q=%23" + hashTag;
+        Linkify.TransformFilter filter = new Linkify.TransformFilter() {
+            @Override
+            public String transformUrl(Matcher match, String url) {
+                return hashTagLink;
+            }
+        };
+        Linkify.addLinks(mHashTag, pattern, hashTagLink, null, filter);
+
+        // GoogleMapの処理
+        MapView mMap = (MapView) findViewById(R.id.map);
+        mMap.onCreate(savedInstanceState);
+        GoogleMap googleMap = mMap.getMap();
+
+        // latとlonが取得できなかった場合の回避処理
+        if (sLat.equals("null")) {
+            // 取得できなかった場合、マップを非表示にする。
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+
+        } else if (sLon.equals("null")) {
+            // 取得できなかった場合、マップを非表示にする。
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NONE);
+
+        } else {
+
+            // 取得できた場合は通常処理
+            lat = Double.parseDouble(sLat);
+            lon = Double.parseDouble(sLon);
+
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            googleMap.setMyLocationEnabled(false);
+
+            MapsInitializer.initialize(this);
+
+            CameraPosition eventPlace = new CameraPosition.Builder()
+                    .target(new LatLng(lat, lon)).zoom(15.5f)
+                    .bearing(0).tilt(0).build();
+            CameraUpdate cameraUpdate = CameraUpdateFactory
+                    .newCameraPosition(eventPlace);
+            googleMap.moveCamera(cameraUpdate);
+
+            LatLng eventLocation = new LatLng(lat, lon);
+            MarkerOptions options = new MarkerOptions();
+            options.position(eventLocation);
+            options.title(place);
+            googleMap.addMarker(options);
+
+        }
+
+        // イベント詳細表示用WebView
         mWebView.getSettings();
-        mWebView.setBackgroundColor(getResources().getColor(R.color.background_material_light));
+        mWebView.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));
         mWebView.loadData(description, "text/html;charset=utf-8", "utf-8");
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MapView mMap = (MapView) findViewById(R.id.map);
+        mMap.onResume();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MapView mMap = (MapView) findViewById(R.id.map);
+        mMap.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        MapView mMap = (MapView) findViewById(R.id.map);
+        mMap.onLowMemory();
     }
 
     @Override
@@ -85,6 +211,7 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -115,5 +242,29 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
 
+    }
+
+    private class EventPlaceLocation implements LocationSource {
+
+        private double latitude;
+        private double longitude;
+
+        public EventPlaceLocation(double latitude, double longitude) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        @Override
+        public void activate(OnLocationChangedListener onLocationChangedListener) {
+            Location location = new Location("EventLocation");
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            onLocationChangedListener.onLocationChanged(location);
+        }
+
+        @Override
+        public void deactivate() {
+
+        }
     }
 }

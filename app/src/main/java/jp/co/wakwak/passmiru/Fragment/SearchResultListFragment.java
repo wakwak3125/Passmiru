@@ -28,9 +28,9 @@ import jp.co.wakwak.passmiru.Data.Event;
 import jp.co.wakwak.passmiru.EventDetailActivity;
 import jp.co.wakwak.passmiru.R;
 
-public class EventListFragment extends ListFragment implements AbsListView.OnScrollListener {
+public class SearchResultListFragment extends ListFragment implements AbsListView.OnScrollListener {
 
-    final static String TAG = EventListFragment.class.getSimpleName();
+    final static String TAG = SearchResultListFragment.class.getSimpleName();
 
     private OnFragmentInteractionListener mListener;
 
@@ -50,7 +50,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     static final int INTERNAL_PROGRESS_CONTAINER_ID = 0x00ff0002;
     static final int INTERNAL_LIST_CONTAINER_ID = 0x00ff0003;
 
-    public EventListFragment() {
+    public SearchResultListFragment() {
     }
 
     @Override

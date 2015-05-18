@@ -26,7 +26,7 @@ public class UserEventFragment extends Fragment {
 
     private UserEventRequest userEventRequest;
 
-    @InjectView(R.id.title)
+    @InjectView(R.id.startedAt)
     TextView mTitle;
 
 

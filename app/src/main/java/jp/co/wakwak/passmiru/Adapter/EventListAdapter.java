@@ -1,7 +1,6 @@
 package jp.co.wakwak.passmiru.Adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,7 @@ public class EventListAdapter extends ArrayAdapter<Event> {
     static class ViewHolder {
         @InjectView(R.id.listImage)
         NetworkImageView listImage;
-        @InjectView(R.id.title)
+        @InjectView(R.id.startedAt)
         TextView title;
         @InjectView(R.id.updateDate)
         TextView updateDate;
@@ -67,7 +66,6 @@ public class EventListAdapter extends ArrayAdapter<Event> {
         }
 
         Event event = getItem(position);
-
         String limit = event.getLimit();
 
         holder.title.setText(event.getTitle());
@@ -82,10 +80,7 @@ public class EventListAdapter extends ArrayAdapter<Event> {
         holder.updateDate.setText(event.getUpdated_at());
         holder.listImage.setImageUrl(event.getImgUrl(), AppController.getInstance().getImageLoader());
 
-        Log.d(TAG, "imgUrl = " + event.getImgUrl());
-
         return convertView;
-
     }
 
     /*public void swap(List<Event> objects) {

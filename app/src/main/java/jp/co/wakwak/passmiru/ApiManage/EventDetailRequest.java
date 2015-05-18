@@ -30,14 +30,38 @@ public class EventDetailRequest {
 
                         try {
                             JSONArray userEvents = response.getJSONArray("events");
-                            for(int i = 0; i < userEvents.length(); i++){
+                            for (int i = 0; i < userEvents.length(); i++) {
                                 JSONObject event = userEvents.getJSONObject(i);
                                 int eventId = event.getInt("event_id");
                                 String eventTitle = event.getString("title");
                                 String description = event.getString("description");
-                                String updated_at = event.getString("updated_at");
+                                String updatedAt = event.getString("updated_at");
+                                String catchMsg = event.getString("catch");
+                                String eventPlace = event.getString("place");
+                                String lat = event.getString("lat");
+                                String lon = event.getString("lon");
+                                String startedAt = event.getString("started_at");
+                                String address = event.getString("address");
+                                String ownerNickname = event.getString("owner_nickname");
+                                String ownerDisplayName = event.getString("owner_display_name");
+                                String hashTag = event.getString("hash_tag");
 
-                                EventBus.getDefault().post(new EventDetailBus(true, eventId, eventTitle, description, imgUrl, updated_at));
+                                EventBus.getDefault().post(new EventDetailBus(
+                                        true,
+                                        eventId,
+                                        eventTitle,
+                                        description,
+                                        imgUrl,
+                                        updatedAt,
+                                        catchMsg,
+                                        eventPlace,
+                                        lat,
+                                        lon,
+                                        startedAt,
+                                        address,
+                                        ownerNickname,
+                                        ownerDisplayName,
+                                        hashTag));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

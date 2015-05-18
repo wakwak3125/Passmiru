@@ -3,7 +3,9 @@ package jp.co.wakwak.passmiru;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -11,15 +13,20 @@ import com.astuetz.PagerSlidingTabStrip;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import jp.co.wakwak.passmiru.Adapter.EventListAdapter;
 import jp.co.wakwak.passmiru.Adapter.PagerAdapter;
+import jp.co.wakwak.passmiru.ApiManage.EventsRequest;
 import jp.co.wakwak.passmiru.Fragment.EventListFragment;
 import jp.co.wakwak.passmiru.Fragment.UserEventFragment;
 
 
 public class MainActivity extends AppCompatActivity
         implements EventListFragment.OnFragmentInteractionListener, UserEventFragment.OnFragmentInteractionListener {
+    private static String TAG = MainActivity.class.getSimpleName();
 
     private PagerAdapter pagerAdapter;
+    private EventsRequest eventsRequest;
+    private EventListAdapter adapter;
 
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
@@ -27,6 +34,8 @@ public class MainActivity extends AppCompatActivity
     ViewPager pager;
     @InjectView(R.id.tabs)
     PagerSlidingTabStrip tabStrip;
+
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +49,26 @@ public class MainActivity extends AppCompatActivity
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
         tabStrip.setDividerColor(getResources().getColor(android.R.color.transparent));
         tabStrip.setViewPager(pager);
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        mSearchView = (SearchView)toolbar.getMenu().findItem(R.id.menu_search).getActionView();
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String keyWord = query.replace(" ", ",");
+                Log.d(TAG, "検索単語は→" + keyWord);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         return true;
     }
 

@@ -4,7 +4,7 @@
     xmlns:cardview="http://schemas.android.com/tools"
     android:id="@+id/cardView"
     android:layout_width="match_parent"
-    android:layout_height="148dp"
+    android:layout_height="158dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:padding="8dp"
     card_view:cardCornerRadius="0dp"
@@ -13,7 +13,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical" >
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/listImage"
@@ -24,13 +24,16 @@
             android:layout_alignParentTop="true"
             android:background="#ffdde1e4"
             android:layout_marginRight="4dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="eventTitle"
-            android:id="@+id/title"
+            android:id="@+id/startedAt"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/listImage"
             android:textStyle="bold"
@@ -47,14 +50,14 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/ownerNickname"
-            android:layout_marginRight="4dp">
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:id="@+id/limit"
-
+                android:id="@+id/accepted"
                 android:layout_gravity="bottom|right" />
 
             <TextView
@@ -68,11 +71,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:id="@+id/accepted"
-
+                android:id="@+id/limit"
                 android:layout_gravity="bottom|right"
                 android:gravity="right|end" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@android:color/black"
+            android:id="@+id/line1"
+            android:layout_below="@+id/listImage"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -92,7 +105,9 @@
             android:layout_gravity="left|top"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="4dp"
+            android:layout_marginBottom="4dp" />
 
         <TextView
             android:layout_width="260dp"
@@ -101,6 +116,7 @@
             android:id="@+id/updateDate"
             android:layout_gravity="center_horizontal|top"
             android:layout_alignParentBottom="true"
-            android:layout_toRightOf="@+id/koukai_date" />
+            android:layout_toRightOf="@+id/koukai_date"
+            android:layout_marginBottom="4dp" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>
