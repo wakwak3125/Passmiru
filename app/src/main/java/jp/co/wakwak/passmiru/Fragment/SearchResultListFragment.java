@@ -1,7 +1,6 @@
 package jp.co.wakwak.passmiru.Fragment;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -18,52 +17,62 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
-import jp.co.wakwak.passmiru.Adapter.EventListAdapter;
+import jp.co.wakwak.passmiru.Adapter.SearchResultListAdapter;
 import jp.co.wakwak.passmiru.ApiManage.EventDetailRequest;
-import jp.co.wakwak.passmiru.ApiManage.EventsRequest;
-import jp.co.wakwak.passmiru.Bus.EventDetailBus;
-import jp.co.wakwak.passmiru.Bus.ListShowBus;
+import jp.co.wakwak.passmiru.ApiManage.EventSearchRequest;
+import jp.co.wakwak.passmiru.Bus.ResultListShowBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
-import jp.co.wakwak.passmiru.Data.Event;
-import jp.co.wakwak.passmiru.EventDetailActivity;
+import jp.co.wakwak.passmiru.Data.SearchResult;
 import jp.co.wakwak.passmiru.R;
 
 public class SearchResultListFragment extends ListFragment implements AbsListView.OnScrollListener {
 
-    final static String TAG = SearchResultListFragment.class.getSimpleName();
+    private static final String TAG = SearchResultListFragment.class.getSimpleName();
+    private static final String KEY_WORD = "KEY_WORD";
 
+    private String mKeyword;
     private OnFragmentInteractionListener mListener;
 
-    private EventsRequest eventsRequest;
+    private EventSearchRequest searchRequest;
     private EventDetailRequest eventDetailRequest;
 
-    private ArrayList<Event> events;
-    private EventListAdapter adapter;
+    private ArrayList<SearchResult> results;
+    private SearchResultListAdapter adapter;
     private ListView mListView;
-    private View mFooter;
-
-    private int start;
-
-    private boolean loading = true;
-    private int previousTotal = 0;
 
     static final int INTERNAL_PROGRESS_CONTAINER_ID = 0x00ff0002;
     static final int INTERNAL_LIST_CONTAINER_ID = 0x00ff0003;
+
+    private View mFooter;
+    private boolean loading = true;
+    private int previousTotal = 0;
 
     public SearchResultListFragment() {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
+
+        if (getArguments() != null) {
+            mKeyword = getArguments().getString(KEY_WORD);
+        } else {
+            Log.d(TAG, "検索単語が設定されていません");
+        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.event_list, container, false);
+        View view = inflater.inflate(R.layout.result_list, container, false);
         ProgressBar pBar = (ProgressBar) view.findViewById(android.R.id.progress);
         LinearLayout pframe = (LinearLayout) pBar.getParent();
         pframe.setId(INTERNAL_PROGRESS_CONTAINER_ID);
@@ -82,11 +91,8 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Log.d(TAG, "onActivityCreated");
-
-        events = new ArrayList<Event>();
-
-        adapter = new EventListAdapter(getActivity(), events);
+        results = new ArrayList<SearchResult>();
+        adapter = new SearchResultListAdapter(getActivity(), results);
         setListAdapter(adapter);
 
         setListShown(false);
@@ -94,70 +100,10 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
         getListView().addFooterView(mFooter, null, false);
         getListView().setOnScrollListener(this);
 
-        eventsRequest = new EventsRequest(adapter);
-        eventsRequest.getEvents(1, 3, null);
+        searchRequest = new EventSearchRequest(adapter);
+        searchRequest.getSearchResult(1, 3, mKeyword);
 
         eventDetailRequest = new EventDetailRequest();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-        // 初回アイテム追加時のメソッドコール防止(暫定)
-        if (adapter == null || totalItemCount == 1) {
-            return;
-        }
-
-        if (loading) {
-            if (totalItemCount > previousTotal) {
-                Log.d(TAG, "totalItemCount   = " + totalItemCount);
-                Log.d(TAG, "previousTotal = " + previousTotal);
-                previousTotal = totalItemCount;
-                loading = false;
-            }
-        }
-        if (!loading && totalItemCount == visibleItemCount + firstVisibleItem) {
-            Log.d("onScroll", "Loading......");
-            int start = adapter.getCount() + 1;
-            eventsRequest = new EventsRequest(adapter);
-            eventsRequest.getEvents(start, 3, null);
-            loading = true;
-        }
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-
     }
 
     @Override
@@ -180,20 +126,9 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        Event event = (Event)l.getItemAtPosition(position);
-        int eventID = event.getEvent_id();
-        String imgUrl = event.getImgUrl();
-        eventDetailRequest.getEventDetail(eventID, imgUrl);
-
-        Log.d(TAG, "TITLE = " + event.getTitle());
-
     }
 
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(String id);
-    }
-
-    public void onEvent(ListShowBus event) {
+    public void onEvent(ResultListShowBus event) {
 
         if (event.isSuccess()) {
             setListShown(true);
@@ -202,42 +137,39 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
         }
     }
 
-    public void onEvent(EventDetailBus detailBus) {
-        if (detailBus.isSuccess()) {
-            String description = detailBus.getDescription();
-            String imgUrl = detailBus.getImgUrl();
-            String title = detailBus.getEventTitle();
-            String updated_at = detailBus.getUpdated_at();
-            String catchMsg = detailBus.getCatchMsg();
-            String eventPlace = detailBus.getEventPlace();
-            String lat = detailBus.getLatitude();
-            String lon = detailBus.getLongitude();
-            String startedAt = detailBus.getStartedAt();
-            String address = detailBus.getAddress();
-            String ownerNickName = detailBus.getOwnerNickname();
-            String ownerDisplayName = detailBus.getOwnerDisplayName();
-            String hashTag = detailBus.getHashTag();
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
 
-            Intent intent = new Intent(AppController.getContext(), EventDetailActivity.class);
-            intent.putExtra("description", description);
-            intent.putExtra("imgUrl", imgUrl);
-            intent.putExtra("title", title);
-            intent.putExtra("updated_at", updated_at);
-            intent.putExtra("catch", catchMsg);
-            intent.putExtra("eventPlace", eventPlace);
-            intent.putExtra("lat", lat);
-            intent.putExtra("lon", lon);
-            intent.putExtra("startedAt", startedAt);
-            intent.putExtra("address", address);
-            intent.putExtra("ownerNickName", ownerNickName);
-            intent.putExtra("ownerDisplayName", ownerDisplayName);
-            intent.putExtra("hashTag", hashTag);
+    }
 
-            startActivity(intent);
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-        } else {
-            Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+        // 初回アイテム追加時のメソッドコール防止(暫定)
+        if (adapter == null || totalItemCount == 1) {
+            return;
         }
+
+        if (loading) {
+            if (totalItemCount > previousTotal) {
+                Log.d(TAG, "totalItemCount   = " + totalItemCount);
+                Log.d(TAG, "previousTotal = " + previousTotal);
+                previousTotal = totalItemCount;
+                loading = false;
+            }
+        }
+        if (!loading && totalItemCount == visibleItemCount + firstVisibleItem) {
+            Log.d("onScroll", "Loading......");
+            int start = adapter.getCount() + 1;
+            searchRequest = new EventSearchRequest(adapter);
+            searchRequest.getSearchResult(start, 3, mKeyword);
+            loading = true;
+        }
+    }
+
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        public void onFragmentInteraction(String id);
     }
 
 }

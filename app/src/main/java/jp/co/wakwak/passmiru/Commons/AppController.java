@@ -8,6 +8,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.deploygate.sdk.DeployGate;
 
 /**
  * Created by RyoSakaguchi on 15/04/28.
@@ -27,6 +28,7 @@ public class AppController extends Application {
         super.onCreate();
         mInstance = this;
         mContext = getApplicationContext();
+        DeployGate.install(this);
     }
 
     @Override

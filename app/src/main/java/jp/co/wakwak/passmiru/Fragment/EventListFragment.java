@@ -82,10 +82,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Log.d(TAG, "onActivityCreated");
-
         events = new ArrayList<Event>();
-
         adapter = new EventListAdapter(getActivity(), events);
         setListAdapter(adapter);
 
@@ -95,7 +92,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
         getListView().setOnScrollListener(this);
 
         eventsRequest = new EventsRequest(adapter);
-        eventsRequest.getEvents(1, 3, null);
+        eventsRequest.getEvents(1, 3);
 
         eventDetailRequest = new EventDetailRequest();
     }
@@ -150,7 +147,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
             Log.d("onScroll", "Loading......");
             int start = adapter.getCount() + 1;
             eventsRequest = new EventsRequest(adapter);
-            eventsRequest.getEvents(start, 3, null);
+            eventsRequest.getEvents(start, 3);
             loading = true;
         }
     }

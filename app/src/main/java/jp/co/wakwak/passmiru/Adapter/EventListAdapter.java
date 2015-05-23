@@ -17,20 +17,12 @@ import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.Event;
 import jp.co.wakwak.passmiru.R;
 
-/**
- * Created by RyoSakaguchi on 15/04/29.
- */
 public class EventListAdapter extends ArrayAdapter<Event> {
 
     final static String TAG = EventListAdapter.class.getSimpleName();
 
-    /**
-     * This class contains all butterknife-injected Views & Layouts from layout file 'listrow.xml'
-     * for easy to all layout elements.
-     *
-     * @author ButterKnifeZelezny, plugin for Android Studio by Avast Developers (http://github.com/avast)
-     */
     static class ViewHolder {
+
         @InjectView(R.id.listImage)
         NetworkImageView listImage;
         @InjectView(R.id.startedAt)
@@ -83,11 +75,4 @@ public class EventListAdapter extends ArrayAdapter<Event> {
         return convertView;
     }
 
-    /*public void swap(List<Event> objects) {
-        clear();
-        for (Event event : objects) {
-            add(event);
-        }
-        notifyDataSetChanged();
-    }*/
 }

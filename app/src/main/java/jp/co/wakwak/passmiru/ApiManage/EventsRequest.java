@@ -1,6 +1,7 @@
 package jp.co.wakwak.passmiru.ApiManage;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -40,10 +41,10 @@ public class EventsRequest {
     }
     // 引数のstartは検索の出力開始位置(例:1であれば1件目から出力する)
     // orderには1,2,3のどれかを渡す。説明はリファレンスページで確認。
-    public void getEvents(int start, int order, String keyWord) {
+    public void getEvents(int start, int order) {
 
         events = new ArrayList<Event>();
-        String url = "http://connpass.com/api/v1/event/?keyword=" + keyWord + "&start=" + start + "&order=" + order + "&count=10";
+        final String url = "http://connpass.com/api/v1/event/?start=" + start + "&order=" + order + "&count=10";
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
@@ -74,6 +75,9 @@ public class EventsRequest {
                                 HtmlParseTask task = new HtmlParseTask(event, event_url, adapter);
                                 task.execute();
                                 events.add(event);
+
+                                Log.d(TAG, "URL = " + url);
+                                Log.d(TAG, "RESPONSE = " + response);
                             }
                             adapter.addAll(events);
                             EventBus.getDefault().post(new ListShowBus(true));
