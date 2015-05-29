@@ -1,6 +1,7 @@
 package jp.co.wakwak.passmiru.Fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -18,11 +19,13 @@ import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.SearchResultListAdapter;
-import jp.co.wakwak.passmiru.ApiManage.EventDetailRequest;
 import jp.co.wakwak.passmiru.ApiManage.EventSearchRequest;
+import jp.co.wakwak.passmiru.ApiManage.SearchResultDetailRequest;
 import jp.co.wakwak.passmiru.Bus.ResultListShowBus;
+import jp.co.wakwak.passmiru.Bus.SearchResultBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.SearchResult;
+import jp.co.wakwak.passmiru.EventDetailActivity;
 import jp.co.wakwak.passmiru.R;
 
 public class SearchResultListFragment extends ListFragment implements AbsListView.OnScrollListener {
@@ -34,7 +37,7 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
     private OnFragmentInteractionListener mListener;
 
     private EventSearchRequest searchRequest;
-    private EventDetailRequest eventDetailRequest;
+    private SearchResultDetailRequest detailRequest;
 
     private ArrayList<SearchResult> results;
     private SearchResultListAdapter adapter;
@@ -53,12 +56,13 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        // EventBus.getDefault().register(this);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
 
         if (getArguments() != null) {
             mKeyword = getArguments().getString(KEY_WORD);
@@ -103,7 +107,7 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
         searchRequest = new EventSearchRequest(adapter);
         searchRequest.getSearchResult(1, 3, mKeyword);
 
-        eventDetailRequest = new EventDetailRequest();
+        detailRequest = new SearchResultDetailRequest();
     }
 
     @Override
@@ -126,15 +130,10 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-    }
-
-    public void onEvent(ResultListShowBus event) {
-
-        if (event.isSuccess()) {
-            setListShown(true);
-        } else {
-            Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
-        }
+        SearchResult result = (SearchResult)l.getItemAtPosition(position);
+        int eventID = result.getEvent_id();
+        String imgUrl = result.getImgUrl();
+        detailRequest.getEventDetail(eventID, imgUrl);
     }
 
     @Override
@@ -170,6 +169,53 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+    public void onEvent(ResultListShowBus event) {
+
+        if (event.isSuccess()) {
+            setListShown(true);
+        } else {
+            Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onEvent(SearchResultBus resultBus) {
+        if (resultBus.isSuccess()) {
+            String description = resultBus.getDescription();
+            String imgUrl = resultBus.getImgUrl();
+            String title = resultBus.getEventTitle();
+            String updated_at = resultBus.getUpdated_at();
+            String catchMsg = resultBus.getCatchMsg();
+            String eventPlace = resultBus.getEventPlace();
+            String lat = resultBus.getLatitude();
+            String lon = resultBus.getLongitude();
+            String startedAt = resultBus.getStartedAt();
+            String address = resultBus.getAddress();
+            String ownerNickName = resultBus.getOwnerNickname();
+            String ownerDisplayName = resultBus.getOwnerDisplayName();
+            String hashTag = resultBus.getHashTag();
+
+            Intent intent = new Intent(AppController.getContext(), EventDetailActivity.class);
+            intent.putExtra("description", description);
+            intent.putExtra("imgUrl", imgUrl);
+            intent.putExtra("title", title);
+            intent.putExtra("updated_at", updated_at);
+            intent.putExtra("catch", catchMsg);
+            intent.putExtra("eventPlace", eventPlace);
+            intent.putExtra("lat", lat);
+            intent.putExtra("lon", lon);
+            intent.putExtra("startedAt", startedAt);
+            intent.putExtra("address", address);
+            intent.putExtra("ownerNickName", ownerNickName);
+            intent.putExtra("ownerDisplayName", ownerDisplayName);
+            intent.putExtra("hashTag", hashTag);
+
+            startActivity(intent);
+
+        } else {
+            Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

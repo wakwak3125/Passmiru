@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.EventListAdapter;
 import jp.co.wakwak.passmiru.Bus.ListShowBus;
+import jp.co.wakwak.passmiru.Bus.SwipeFinishBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.Event;
 
@@ -40,12 +41,16 @@ public class EventsRequest {
         this.adapter = adapter;
     }
     // 引数のstartは検索の出力開始位置(例:1であれば1件目から出力する)
+
     // orderには1,2,3のどれかを渡す。説明はリファレンスページで確認。
-    public void getEvents(int start, int order) {
+
+    // calledByはどのメソッドから呼び出されたかで、EventBusの分岐を作成している。
+    // 1 = onActivityCreated, 2 = onRefresh
+    public void getEvents(int start, int order, final int calledBy) {
 
         events = new ArrayList<Event>();
         final String url = "http://connpass.com/api/v1/event/?start=" + start + "&order=" + order + "&count=10";
-
+        Log.d(TAG, "getEvent...");
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -76,11 +81,19 @@ public class EventsRequest {
                                 task.execute();
                                 events.add(event);
 
-                                Log.d(TAG, "URL = " + url);
-                                Log.d(TAG, "RESPONSE = " + response);
                             }
-                            adapter.addAll(events);
-                            EventBus.getDefault().post(new ListShowBus(true));
+                            // adapter.addAll(events);
+
+                            if (calledBy == 1) {
+                                adapter.addAll(events);
+                                EventBus.getDefault().post(new ListShowBus(true));
+                            } else if (calledBy == 2) {
+                                adapter.clear();
+                                adapter.addAll(events);
+                                adapter.notifyDataSetChanged();
+                                EventBus.getDefault().post(new SwipeFinishBus(true));
+                            }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

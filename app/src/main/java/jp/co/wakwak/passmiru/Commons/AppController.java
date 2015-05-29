@@ -2,13 +2,18 @@ package jp.co.wakwak.passmiru.Commons;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.deploygate.sdk.DeployGate;
+
+import jp.co.wakwak.passmiru.RegisterActivity;
 
 /**
  * Created by RyoSakaguchi on 15/04/28.
@@ -22,6 +27,7 @@ public class AppController extends Application {
     private ImageLoader mImageLoader;
     private static AppController mInstance;
     private static Context mContext;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void onCreate() {
@@ -29,6 +35,16 @@ public class AppController extends Application {
         mInstance = this;
         mContext = getApplicationContext();
         DeployGate.install(this);
+
+        sharedPreferences = getSharedPreferences("USER_SETTING", Context.MODE_PRIVATE);
+        String userName = sharedPreferences.getString("USER_NAME","");
+        Log.d(TAG, userName);
+
+        if (userName == null) {
+            Log.d(TAG, "ユーザーネーム無いで！");
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override

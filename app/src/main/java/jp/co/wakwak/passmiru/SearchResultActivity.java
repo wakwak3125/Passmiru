@@ -28,7 +28,6 @@ public class SearchResultActivity extends AppCompatActivity implements SearchRes
     private static final String KEY_WORD = "KEY_WORD";
     private Intent intent;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

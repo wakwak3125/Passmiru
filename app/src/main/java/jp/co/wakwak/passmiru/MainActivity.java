@@ -1,7 +1,9 @@
 package jp.co.wakwak.passmiru;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity
     private EventListAdapter adapter;
     private FragmentManager fm;
     private FragmentTransaction ft;
-    private SearchResultListFragment searchResultListFragment;
+    private Fragment registerFragment;
 
     private static final String KEY_WORD = "KEY_WORD";
 
@@ -47,14 +49,15 @@ public class MainActivity extends AppCompatActivity
     PagerSlidingTabStrip tabStrip;
 
     private SearchView mSearchView;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-        setSupportActionBar(toolbar);
 
+        setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("passmiru");
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));

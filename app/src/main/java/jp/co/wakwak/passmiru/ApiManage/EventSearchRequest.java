@@ -1,7 +1,6 @@
 package jp.co.wakwak.passmiru.ApiManage;
 
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -67,8 +66,6 @@ public class EventSearchRequest {
                                 result.setAccepted(accepted);
                                 result.setOwner_nickname(owner_nickname);
                                 result.setUpdated_at(updated_at);
-
-                                Log.d(TAG, "URL = " + url);
 
                                 HtmlParseTask task = new HtmlParseTask(result, event_url, searchResultListAdapter);
                                 task.execute();

@@ -3,13 +3,14 @@ package jp.co.wakwak.passmiru.Fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -23,12 +24,13 @@ import jp.co.wakwak.passmiru.ApiManage.EventDetailRequest;
 import jp.co.wakwak.passmiru.ApiManage.EventsRequest;
 import jp.co.wakwak.passmiru.Bus.EventDetailBus;
 import jp.co.wakwak.passmiru.Bus.ListShowBus;
+import jp.co.wakwak.passmiru.Bus.SwipeFinishBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.Event;
 import jp.co.wakwak.passmiru.EventDetailActivity;
 import jp.co.wakwak.passmiru.R;
 
-public class EventListFragment extends ListFragment implements AbsListView.OnScrollListener {
+public class EventListFragment extends ListFragment implements AbsListView.OnScrollListener, SwipeRefreshLayout.OnRefreshListener {
 
     final static String TAG = EventListFragment.class.getSimpleName();
 
@@ -41,6 +43,9 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     private EventListAdapter adapter;
     private ListView mListView;
     private View mFooter;
+
+    private SwipeRefreshLayout refreshLayout;
+    private Handler handler = new Handler();
 
     private int start;
 
@@ -63,16 +68,23 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         View view = inflater.inflate(R.layout.event_list, container, false);
         ProgressBar pBar = (ProgressBar) view.findViewById(android.R.id.progress);
+
         LinearLayout pframe = (LinearLayout) pBar.getParent();
         pframe.setId(INTERNAL_PROGRESS_CONTAINER_ID);
 
         ListView listview = (ListView) view.findViewById(android.R.id.list);
         listview.setItemsCanFocus(false);
+
+        refreshLayout = (SwipeRefreshLayout)listview.getParent();
+        refreshLayout.setId(INTERNAL_LIST_CONTAINER_ID);
+
+/*
         FrameLayout frameLayout = (FrameLayout) listview.getParent();
         frameLayout.setId(INTERNAL_LIST_CONTAINER_ID);
-
+*/
         mFooter = inflater.inflate(R.layout.listfooter, container, false);
 
         return view;
@@ -90,12 +102,38 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
 
         getListView().addFooterView(mFooter, null, false);
         getListView().setOnScrollListener(this);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(
+                android.R.color.holo_red_light,
+                android.R.color.holo_green_light,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light);
 
         eventsRequest = new EventsRequest(adapter);
-        eventsRequest.getEvents(1, 3);
+        eventsRequest.getEvents(1, 3, 1);
 
         eventDetailRequest = new EventDetailRequest();
+
     }
+
+    @Override
+    public void onRefresh() {
+        Log.d(TAG, "onRefresh");
+        handler.postDelayed(Refreshing, 2000);
+    }
+
+    private void updateList(EventListAdapter adapter) {
+        // mFooter.setVisibility(View.INVISIBLE);
+        eventsRequest = new EventsRequest(adapter);
+        eventsRequest.getEvents(1, 3, 2);
+    }
+
+    private Runnable Refreshing = new Runnable() {
+        @Override
+        public void run() {
+            updateList(adapter);
+        }
+    };
 
     @Override
     public void onStart() {
@@ -147,7 +185,8 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
             Log.d("onScroll", "Loading......");
             int start = adapter.getCount() + 1;
             eventsRequest = new EventsRequest(adapter);
-            eventsRequest.getEvents(start, 3);
+            eventsRequest.getEvents(start, 3, 1);
+            adapter.notifyDataSetChanged();
             loading = true;
         }
     }
@@ -186,8 +225,19 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
 
     }
 
+
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(String id);
+    }
+
+    public void onEvent(SwipeFinishBus finishBus) {
+        if (finishBus.isSuccess()) {
+            refreshLayout.setRefreshing(false);
+            // mFooter.setVisibility(View.VISIBLE);
+            Log.d(TAG, "setRefreshing(false)");
+        } else {
+            Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onEvent(ListShowBus event) {
