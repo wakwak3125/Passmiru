@@ -68,7 +68,6 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
         View view = inflater.inflate(R.layout.event_list, container, false);
         ProgressBar pBar = (ProgressBar) view.findViewById(android.R.id.progress);
 
@@ -81,10 +80,6 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
         refreshLayout = (SwipeRefreshLayout)listview.getParent();
         refreshLayout.setId(INTERNAL_LIST_CONTAINER_ID);
 
-/*
-        FrameLayout frameLayout = (FrameLayout) listview.getParent();
-        frameLayout.setId(INTERNAL_LIST_CONTAINER_ID);
-*/
         mFooter = inflater.inflate(R.layout.listfooter, container, false);
 
         return view;
@@ -230,6 +225,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
         void onFragmentInteraction(String id);
     }
 
+    // ↓EventBus用のメソッド達
     public void onEvent(SwipeFinishBus finishBus) {
         if (finishBus.isSuccess()) {
             refreshLayout.setRefreshing(false);

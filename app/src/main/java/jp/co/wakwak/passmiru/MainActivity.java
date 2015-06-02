@@ -20,7 +20,9 @@ import butterknife.InjectView;
 import jp.co.wakwak.passmiru.Adapter.EventListAdapter;
 import jp.co.wakwak.passmiru.Adapter.PagerAdapter;
 import jp.co.wakwak.passmiru.ApiManage.EventsRequest;
+import jp.co.wakwak.passmiru.Fragment.CreatedEventListFragment;
 import jp.co.wakwak.passmiru.Fragment.EventListFragment;
+import jp.co.wakwak.passmiru.Fragment.JoinEventListFragment;
 import jp.co.wakwak.passmiru.Fragment.SearchResultListFragment;
 import jp.co.wakwak.passmiru.Fragment.UserEventFragment;
 
@@ -29,7 +31,9 @@ public class MainActivity extends AppCompatActivity
         implements
         EventListFragment.OnFragmentInteractionListener,
         UserEventFragment.OnFragmentInteractionListener,
-        SearchResultListFragment.OnFragmentInteractionListener {
+        SearchResultListFragment.OnFragmentInteractionListener,
+        JoinEventListFragment.OnFragmentInteractionListener,
+        CreatedEventListFragment.OnFragmentInteractionListener{
     private static String TAG = MainActivity.class.getSimpleName();
 
     private PagerAdapter pagerAdapter;

@@ -62,7 +62,7 @@ public class EventListAdapter extends ArrayAdapter<Event> {
 
         holder.title.setText(event.getTitle());
         if (limit.equals("null")) {
-            holder.limit.setText(null);
+            holder.limit.setText("定員なし");
         } else {
             holder.limit.setText(limit);
         }

@@ -3,27 +3,25 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-        <android.support.v4.widget.SwipeRefreshLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="wrap_content">
+
+        <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/swipelayout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-        <ListView
-            android:id="@id/android:list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
-            android:clipToPadding="false"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="8dp" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="wrap_content">
+
+            <ListView
+                android:id="@id/android:list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="8dp"
+                android:padding="8dp" />
+        </android.support.v4.widget.SwipeRefreshLayout>
     </FrameLayout>
-
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,7 +31,7 @@
 
         <ProgressBar
             android:id="@android:id/progress"
-            style="?android:attr/progressBarStyleLarge"
+            style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

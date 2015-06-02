@@ -41,9 +41,7 @@ public class EventsRequest {
         this.adapter = adapter;
     }
     // 引数のstartは検索の出力開始位置(例:1であれば1件目から出力する)
-
     // orderには1,2,3のどれかを渡す。説明はリファレンスページで確認。
-
     // calledByはどのメソッドから呼び出されたかで、EventBusの分岐を作成している。
     // 1 = onActivityCreated, 2 = onRefresh
     public void getEvents(int start, int order, final int calledBy) {
@@ -80,9 +78,7 @@ public class EventsRequest {
                                 HtmlParseTask task = new HtmlParseTask(event, event_url, adapter);
                                 task.execute();
                                 events.add(event);
-
                             }
-                            // adapter.addAll(events);
 
                             if (calledBy == 1) {
                                 adapter.addAll(events);
@@ -93,7 +89,6 @@ public class EventsRequest {
                                 adapter.notifyDataSetChanged();
                                 EventBus.getDefault().post(new SwipeFinishBus(true));
                             }
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
