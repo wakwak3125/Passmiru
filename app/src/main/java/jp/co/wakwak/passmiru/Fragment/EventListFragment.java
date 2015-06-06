@@ -247,6 +247,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
 
     public void onEvent(EventDetailBus detailBus) {
         if (detailBus.isSuccess()) {
+            String eventId = String.valueOf(detailBus.getEventId());
             String description = detailBus.getDescription();
             String imgUrl = detailBus.getImgUrl();
             String title = detailBus.getEventTitle();
@@ -260,8 +261,10 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
             String ownerNickName = detailBus.getOwnerNickname();
             String ownerDisplayName = detailBus.getOwnerDisplayName();
             String hashTag = detailBus.getHashTag();
+            String eventType = detailBus.getEventType();
 
             Intent intent = new Intent(AppController.getContext(), EventDetailActivity.class);
+            intent.putExtra("eventID", eventId);
             intent.putExtra("description", description);
             intent.putExtra("imgUrl", imgUrl);
             intent.putExtra("title", title);
@@ -275,6 +278,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
             intent.putExtra("ownerNickName", ownerNickName);
             intent.putExtra("ownerDisplayName", ownerDisplayName);
             intent.putExtra("hashTag", hashTag);
+            intent.putExtra("eventType", eventType);
 
             startActivity(intent);
 

@@ -2,6 +2,7 @@ package jp.co.wakwak.passmiru;
 
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,10 +10,13 @@ import android.support.v7.widget.Toolbar;
 import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
@@ -34,6 +38,7 @@ import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import jp.co.wakwak.passmiru.Commons.AppController;
 
 
 public class EventDetailActivity extends AppCompatActivity implements ObservableScrollViewCallbacks {
@@ -42,6 +47,8 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
     private int mParallaxImageHeight;
     private Double lat;
     private Double lon;
+    private String eventID;
+    private String eventType;
 
     @InjectView(R.id.title)
     TextView mTitle;
@@ -67,6 +74,10 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
     TextView mOwnerNickName;
     @InjectView(R.id.scroll)
     ObservableScrollView mScrollView;
+    @InjectView(R.id.openBrowserButton)
+    BootstrapButton mOpenBrowserButton;
+    @InjectView(R.id.joinButton)
+    BootstrapButton mJoinButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +86,7 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         ButterKnife.inject(this);
 
         intent = getIntent();
+        eventID = intent.getStringExtra("eventID");
         String description = intent.getStringExtra("description");
         String imgUrl = intent.getStringExtra("imgUrl");
         String title = intent.getStringExtra("title");
@@ -88,6 +100,7 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         String ownerNickName = intent.getStringExtra("ownerNickName");
         String ownerDisplayName = intent.getStringExtra("ownerDisplayName");
         final String hashTag = intent.getStringExtra("hashTag");
+        eventType = intent.getStringExtra("eventType");
 
 
         setSupportActionBar(toolbar);
@@ -167,6 +180,38 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         mWebView.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));
         mWebView.loadData(description, "text/html;charset=utf-8", "utf-8");
 
+        // ブラウザで開くボタン
+        mOpenBrowserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("http://connpass.com/event/"+ eventID +"/");
+                Intent openBrowser = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(openBrowser);
+            }
+        });
+
+        // イベントタイプが告知のみの場合の処理
+        // ボタンのテキストを変更し、ユーザーに通知する。
+        if(eventType.equals("advertisement")) {
+            mJoinButton.setText("connpassでの参加受付なし");
+            // mJoinButton.setBootstrapButtonEnabled(false);
+        }
+
+        // 参加ページにとぶボタン
+        // イベントタイプが告知のみの場合は、参加登録ページに遷移させず、トーストにてユーザーに通知
+        mJoinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(eventType.equals("advertisement")) {
+                    Toast.makeText(AppController.getContext(),"このイベントはconnpassでの参加受付を行っておりません。",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Uri uri = Uri.parse("http://connpass.com/event/" + eventID + "/" + "join/");
+                    Intent join = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(join);
+                }
+            }
+        });
     }
 
     @Override

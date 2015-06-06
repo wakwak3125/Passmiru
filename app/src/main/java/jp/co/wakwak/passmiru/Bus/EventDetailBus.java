@@ -18,8 +18,10 @@ public class EventDetailBus {
     private String ownerNickname;
     private String ownerDisplayName;
     private String hashTag;
+    private String eventType;
 
-    public EventDetailBus(boolean success, int eventId, String eventTitle, String description, String imgUrl, String updated_at, String catchMsg, String eventPlace, String latitude, String longitude, String startedAt, String address, String ownerNickname, String ownerDisplayName, String hashTag) {
+    public EventDetailBus(boolean success, int eventId, String eventTitle, String description, String imgUrl, String updated_at, String catchMsg, String eventPlace, String latitude, String longitude, String startedAt,
+                          String address, String ownerNickname, String ownerDisplayName, String hashTag, String eventType) {
         this.success = success;
         this.eventId = eventId;
         this.eventTitle = eventTitle;
@@ -35,6 +37,7 @@ public class EventDetailBus {
         this.ownerNickname = ownerNickname;
         this.ownerDisplayName = ownerDisplayName;
         this.hashTag = hashTag;
+        this.eventType = eventType;
     }
 
 
@@ -156,5 +159,13 @@ public class EventDetailBus {
 
     public void setHashTag(String hashTag) {
         this.hashTag = hashTag;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
     }
 }

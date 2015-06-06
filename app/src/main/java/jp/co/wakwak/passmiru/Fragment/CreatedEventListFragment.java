@@ -28,6 +28,8 @@ public class CreatedEventListFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setListShown(true);
+
     }
 
 

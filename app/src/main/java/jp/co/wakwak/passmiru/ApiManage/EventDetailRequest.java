@@ -45,6 +45,7 @@ public class EventDetailRequest {
                                 String ownerNickname = event.getString("owner_nickname");
                                 String ownerDisplayName = event.getString("owner_display_name");
                                 String hashTag = event.getString("hash_tag");
+                                String eventType = event.getString("event_type");
 
                                 EventBus.getDefault().post(new EventDetailBus(
                                         true,
@@ -61,7 +62,8 @@ public class EventDetailRequest {
                                         address,
                                         ownerNickname,
                                         ownerDisplayName,
-                                        hashTag));
+                                        hashTag,
+                                        eventType));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

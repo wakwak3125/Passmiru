@@ -39,6 +39,8 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
     TextView mProfileDescription;
     @InjectView(R.id.tabHost)
     FragmentTabHost mTabHost;
+    @InjectView(R.id.coverImage)
+    ImageView covetImageView;
 
     UserInformationScraper userInformationScraper;
     SharedPreferences sharedPreferences;
@@ -66,6 +68,9 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_userevent, container, false);
         ButterKnife.inject(this, view);
+
+        Picasso.with(AppController.getContext()).load(R.drawable.coverimage).into(covetImageView);
+
         mTabHost.setup(AppController.getContext(), getChildFragmentManager(), android.R.id.tabcontent);
 
         TabHost.TabSpec joinTab = mTabHost.newTabSpec("joinTab").setIndicator("参加");
@@ -101,7 +106,7 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
 
     public void onEvent(UserInfoBus infoBus) {
 
-        if (infoBus.isSuccess()){
+        if (infoBus.isSuccess()) {
             mProfileName.setText(infoBus.getUserName());
             mProfileDescription.setText(infoBus.getProfileDescription());
             Picasso.with(AppController.getContext()).load(infoBus.getProfileImgUrl()).into(mProfileImage);

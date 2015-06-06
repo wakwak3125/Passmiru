@@ -29,6 +29,7 @@ public class JoinEventListFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setListShown(true);
     }
 
     @Override
