@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.CreatedEvent;
 import jp.co.wakwak.passmiru.R;
 
@@ -23,7 +24,7 @@ public class CreatedEventListAdapter extends ArrayAdapter<CreatedEvent> {
         @InjectView(R.id.listImage)
         NetworkImageView mListImage;
         @InjectView(R.id.startedAt)
-        TextView mStartedAt;
+        TextView mTitle;
         @InjectView(R.id.accepted)
         TextView mAccepted;
         @InjectView(R.id.limit)
@@ -54,6 +55,22 @@ public class CreatedEventListAdapter extends ArrayAdapter<CreatedEvent> {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
+        CreatedEvent createdEvent = getItem(position);
+        String limit = createdEvent.getLimit();
+        holder.mTitle.setText(createdEvent.getTitle());
+
+        if (limit.equals("null")) {
+            holder.mLimit.setText("定員なし");
+        } else {
+            holder.mLimit.setText(limit);
+        }
+
+        holder.mAccepted.setText(createdEvent.getAccepted());
+        holder.mOwnerNickname.setText(createdEvent.getOwner_nickname());
+        holder.mUpdateDate.setText(createdEvent.getUpdated_at());
+        holder.mListImage.setImageUrl(createdEvent.getImgUrl(), AppController.getInstance().getImageLoader());
+
         return convertView;
     }
 }

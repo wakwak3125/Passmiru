@@ -1,83 +1,74 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:context="jp.co.wakwak.passmiru.Fragment.UserEventFragment">
 
-    <ScrollView
+    <ImageView
+        android:id="@+id/coverImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="jp.co.wakwak.passmiru.Fragment.UserEventFragment">
+        android:layout_above="@+id/tabHost"
+        android:scaleType="centerCrop" />
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+    <ImageView
+        android:id="@+id/profileImage"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="#fff5f5f5"
+        android:contentDescription="ProfileImage" />
+
+    <TextView
+        android:id="@+id/profileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profileImage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="profileName"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/profileDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profileName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:paddingBottom="56dp"
+        android:text="profileDescription" />
+
+    <android.support.v4.app.FragmentTabHost
+        android:id="@+id/tabHost"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/profileDescription">
+
+        <LinearLayout
+            android:id="@+id/tabArea"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:context="jp.co.wakwak.passmiru.Fragment.UserEventFragment">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/coverImage"
+            <TabWidget
+                android:id="@android:id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/tabHost"
-                android:scaleType="centerCrop" />
+                android:layout_height="wrap_content" />
 
-            <ImageView
-                android:id="@+id/profileImage"
-                android:layout_width="68dp"
-                android:layout_height="68dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:background="#fff5f5f5"
-                android:contentDescription="ProfileImage" />
-
-            <TextView
-                android:id="@+id/profileName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/profileImage"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:text="profileName"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/profileDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/profileName"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
-                android:paddingBottom="56dp"
-                android:text="profileDescription" />
-
-            <android.support.v4.app.FragmentTabHost
-                android:id="@+id/tabHost"
+            <FrameLayout
+                android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/profileDescription">
-
-                <LinearLayout
-                    android:id="@+id/tabArea"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TabWidget
-                        android:id="@android:id/tabs"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <FrameLayout
-                        android:id="@android:id/tabcontent"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"></FrameLayout>
-                </LinearLayout>
-            </android.support.v4.app.FragmentTabHost>
-
-        </RelativeLayout>
-    </ScrollView>
-</FrameLayout>
+                android:layout_height="match_parent"></FrameLayout>
+        </LinearLayout>
+    </android.support.v4.app.FragmentTabHost>
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</RelativeLayout>

@@ -13,17 +13,18 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import jp.co.wakwak.passmiru.Data.UserEvent;
+import jp.co.wakwak.passmiru.Commons.AppController;
+import jp.co.wakwak.passmiru.Data.JoinEvent;
 import jp.co.wakwak.passmiru.R;
 
-public class JoinEventListAdapter extends ArrayAdapter<UserEvent> {
+public class JoinEventListAdapter extends ArrayAdapter<JoinEvent> {
     final static String TAG = JoinEventListAdapter.class.getSimpleName();
 
     static class ViewHolder {
         @InjectView(R.id.listImage)
         NetworkImageView mListImage;
         @InjectView(R.id.startedAt)
-        TextView mStartedAt;
+        TextView mTitle;
         @InjectView(R.id.accepted)
         TextView mAccepted;
         @InjectView(R.id.limit)
@@ -40,8 +41,8 @@ public class JoinEventListAdapter extends ArrayAdapter<UserEvent> {
         }
     }
 
-    public JoinEventListAdapter(Context context, ArrayList<UserEvent> userEvents) {
-        super(context, R.layout.listrow, userEvents);
+    public JoinEventListAdapter(Context context, ArrayList<JoinEvent> joinEvents) {
+        super(context, R.layout.listrow, joinEvents);
     }
 
     @Override
@@ -54,6 +55,22 @@ public class JoinEventListAdapter extends ArrayAdapter<UserEvent> {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
+        JoinEvent joinEvent = getItem(position);
+        String limit = joinEvent.getLimit();
+
+        if (limit.equals("null")) {
+            holder.mLimit.setText("定員なし");
+        } else {
+            holder.mLimit.setText(limit);
+        }
+
+        holder.mTitle.setText(joinEvent.getTitle());
+        holder.mAccepted.setText(joinEvent.getAccepted());
+        holder.mOwnerNickname.setText(joinEvent.getOwner_nickname());
+        holder.mUpdateDate.setText(joinEvent.getUpdated_at());
+        holder.mListImage.setImageUrl(joinEvent.getImgUrl(), AppController.getInstance().getImageLoader());
+
         return convertView;
     }
 }

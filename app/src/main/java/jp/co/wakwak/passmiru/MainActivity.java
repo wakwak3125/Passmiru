@@ -66,8 +66,9 @@ public class MainActivity extends AppCompatActivity
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
         tabStrip.setDividerColor(getResources().getColor(android.R.color.transparent));
+        tabStrip.setTextColor(getResources().getColorStateList(R.color.tabcolors));
+        tabStrip.setBackgroundColor(getResources().getColor(R.color.primary));
         tabStrip.setViewPager(pager);
-
     }
 
     @Override

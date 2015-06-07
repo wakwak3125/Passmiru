@@ -13,7 +13,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/listImage"
@@ -22,101 +22,108 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:background="#ffdde1e4"
-            android:layout_marginRight="4dp"
-            android:scaleType="centerCrop"
+            android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp" />
+            android:background="#ffdde1e4"
+            android:scaleType="centerCrop" />
 
         <TextView
+            android:id="@+id/startedAt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="eventTitle"
-            android:id="@+id/startedAt"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/listImage"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:layout_alignRight="@+id/relativeLayout"
             android:layout_alignEnd="@+id/relativeLayout"
-            android:layout_marginTop="4dp" />
+            android:layout_alignParentTop="true"
+            android:layout_alignRight="@+id/relativeLayout"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@+id/listImage"
+            android:text="eventTitle"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <LinearLayout
+            android:id="@+id/relativeLayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/relativeLayout"
-            android:orientation="horizontal"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_below="@+id/ownerNickname"
+            android:layout_marginBottom="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginBottom="4dp">
+            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
                 android:id="@+id/accepted"
-                android:layout_gravity="bottom|right" />
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="/"
-                android:id="@+id/textView"
-                android:layout_gravity="bottom|right" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:id="@+id/limit"
                 android:layout_gravity="bottom|right"
-                android:gravity="right|end" />
+                android:text="0"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:text="/"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/limit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:gravity="right|end"
+                android:text="0"
+                android:textColor="@android:color/black" />
         </LinearLayout>
 
         <View
+            android:id="@+id/line1"
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@android:color/black"
-            android:id="@+id/line1"
-            android:layout_below="@+id/listImage"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/listImage"
             android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp" />
+            android:layout_marginRight="4dp"
+            android:background="@android:color/black" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ownerNickname"
             android:id="@+id/ownerNickname"
-            android:textSize="10sp"
-            android:layout_alignBottom="@+id/listImage"
-            android:layout_toRightOf="@+id/listImage"
-            android:layout_toEndOf="@+id/listImage" />
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="公開日: "
+            android:layout_alignBottom="@+id/listImage"
+            android:layout_toEndOf="@+id/listImage"
+            android:layout_toRightOf="@+id/listImage"
+            android:text="ownerNickname"
+            android:textColor="@android:color/black"
+            android:textSize="10sp" />
+
+        <TextView
             android:id="@+id/koukai_date"
-            android:layout_gravity="left|top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_gravity="left|top"
+            android:layout_marginBottom="4dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginBottom="4dp" />
+            android:text="公開日: "
+            android:textColor="@android:color/black" />
 
         <TextView
+            android:id="@+id/updateDate"
             android:layout_width="260dp"
             android:layout_height="wrap_content"
-            android:text="2015/01/25"
-            android:id="@+id/updateDate"
-            android:layout_gravity="center_horizontal|top"
             android:layout_alignParentBottom="true"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginBottom="4dp"
             android:layout_toRightOf="@+id/koukai_date"
-            android:layout_marginBottom="4dp" />
+            android:text="2015/01/25"
+            android:textColor="@android:color/black" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

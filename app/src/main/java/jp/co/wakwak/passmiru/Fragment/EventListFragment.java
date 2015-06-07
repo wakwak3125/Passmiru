@@ -106,9 +106,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
 
         eventsRequest = new EventsRequest(adapter);
         eventsRequest.getEvents(1, 3, 1);
-
         eventDetailRequest = new EventDetailRequest();
-
     }
 
     @Override

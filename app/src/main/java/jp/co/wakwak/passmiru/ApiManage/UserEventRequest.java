@@ -21,7 +21,7 @@ import jp.co.wakwak.passmiru.Adapter.CreatedEventListAdapter;
 import jp.co.wakwak.passmiru.Adapter.JoinEventListAdapter;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.CreatedEvent;
-import jp.co.wakwak.passmiru.Data.UserEvent;
+import jp.co.wakwak.passmiru.Data.JoinEvent;
 
 public class UserEventRequest {
     final static String TAG = UserEventRequest.class.getSimpleName();
@@ -29,11 +29,13 @@ public class UserEventRequest {
     private JoinEventListAdapter joinEventListAdapter;
     private CreatedEventListAdapter createdEventListAdapter;
 
-    private UserEvent userEvent;
+    private JoinEvent joinEvent;
     private CreatedEvent createdEvent;
 
-    private ArrayList<UserEvent> userEventsArrayList;
+    private ArrayList<JoinEvent> joinEventsArrayList;
     private ArrayList<CreatedEvent> createdEvents;
+
+    private String userName;
 
     public UserEventRequest(JoinEventListAdapter joinEventListAdapter) {
         this.joinEventListAdapter = joinEventListAdapter;
@@ -45,8 +47,8 @@ public class UserEventRequest {
 
     // ユーザーが参加したイベントのリクエスト
     public void getUserEvent() {
-        userEventsArrayList = new ArrayList<UserEvent>();
-        String url = "http://connpass.com/api/v1/event/?nickname=wakwak3125";
+        joinEventsArrayList = new ArrayList<JoinEvent>();
+        String url = "http://connpass.com/api/v1/event/?nickname=" + userName;
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -64,20 +66,21 @@ public class UserEventRequest {
                                 String owner_nickname = event.getString("owner_nickname");
                                 String updated_at = event.getString("updated_at");
 
-                                userEvent = new UserEvent();
-                                userEvent.setEvent_id(event_id);
-                                userEvent.setTitle(title);
-                                userEvent.setEvent_url(event_url);
-                                userEvent.setLimit(limit);
-                                userEvent.setAccepted(accepted);
-                                userEvent.setOwner_nickname(owner_nickname);
-                                userEvent.setUpdated_at(updated_at);
+                                joinEvent = new JoinEvent();
+                                joinEvent.setEvent_id(event_id);
+                                joinEvent.setTitle(title);
+                                joinEvent.setEvent_url(event_url);
+                                joinEvent.setLimit(limit);
+                                joinEvent.setAccepted(accepted);
+                                joinEvent.setOwner_nickname(owner_nickname);
+                                joinEvent.setUpdated_at(updated_at);
 
-                                JoinEventHtmlParseTask task = new JoinEventHtmlParseTask(userEvent, event_url, joinEventListAdapter);
+                                JoinEventHtmlParseTask task = new JoinEventHtmlParseTask(joinEvent, event_url, joinEventListAdapter);
                                 task.execute();
-                                userEventsArrayList.add(userEvent);
+                                joinEventsArrayList.add(joinEvent);
                                 // EventBus.getDefault().post(new UserEventBus(true, eventId, eventTitle));
                             }
+                            joinEventListAdapter.addAll(joinEventsArrayList);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -93,7 +96,7 @@ public class UserEventRequest {
 
     // ユーザーが企画したイベントのリクエスト
     public void getCreatedEvent() {
-        String url = "http://connpass.com/api/v1/event/?owner_nickname=wakwak3125";
+        String url = "http://connpass.com/api/v1/event/?owner_nickname=" + userName;
         createdEvents = new ArrayList<CreatedEvent>();
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
@@ -125,6 +128,7 @@ public class UserEventRequest {
                                 task.execute();
                                 createdEvents.add(createdEvent);
                             }
+                            createdEventListAdapter.addAll(createdEvents);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -139,11 +143,11 @@ public class UserEventRequest {
     }
 
     private class JoinEventHtmlParseTask extends AsyncTask<Void, Void, String> {
-        private UserEvent event;
+        private JoinEvent event;
         private String eventUrl;
         private JoinEventListAdapter adapter;
 
-        public JoinEventHtmlParseTask(UserEvent event, String eventUrl, JoinEventListAdapter adapter) {
+        public JoinEventHtmlParseTask(JoinEvent event, String eventUrl, JoinEventListAdapter adapter) {
             this.event = event;
             this.eventUrl = eventUrl;
             this.adapter = adapter;

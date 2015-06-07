@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,20 +47,31 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
     UserInformationScraper userInformationScraper;
     SharedPreferences sharedPreferences;
 
-    private static final String PREF_KEY = "USER_NAME";
-    private static final String KEY_TEXT = "name";
+    private String userName;
 
+    private Context context = AppController.getContext();
+
+    private static final String PREF_KEY = "USER_NAME";
+    private static final String KEY_USER_NAME = "name";
 
     public UserEventFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = getActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
-        userInformationScraper = new UserInformationScraper("wakwak3125");
+        userName = sharedPreferences.getString(KEY_USER_NAME, null);
+        if (userName == null) {
+            FragmentManager fm = getChildFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            UserNameEditFragment userNameEditFragment = new UserNameEditFragment();
+            ft.add(R.id.container, userNameEditFragment, null);
+            ft.commit();
+        } else {
+            userInformationScraper = new UserInformationScraper(userName);
+        }
         EventBus.getDefault().register(this);
     }
 
@@ -79,7 +92,9 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
         TabHost.TabSpec createdTab = mTabHost.newTabSpec("createdTab").setIndicator("企画");
         mTabHost.addTab(createdTab, CreatedEventListFragment.class, null);
 
-        userInformationScraper.execute();
+        if (userName != null) {
+            userInformationScraper.execute();
+        }
 
         return view;
     }

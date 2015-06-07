@@ -2,11 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:attr="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/container"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -24,7 +24,8 @@
         attr:pstsIndicatorColor="@color/accent"
         attr:pstsIndicatorHeight="2dp"
         attr:pstsShouldExpand="true"
-        attr:pstsTabPaddingLeftRight="4dp" />
+        attr:pstsTabPaddingLeftRight="4dp"
+        attr:pstsTextColorSelected="#ffff" />
 
     <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
