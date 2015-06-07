@@ -82,7 +82,7 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
         View view = inflater.inflate(R.layout.fragment_userevent, container, false);
         ButterKnife.inject(this, view);
 
-        Picasso.with(AppController.getContext()).load(R.drawable.coverimage).into(covetImageView);
+        Picasso.with(AppController.getContext()).load(R.drawable.coverimageblur).into(covetImageView);
 
         mTabHost.setup(AppController.getContext(), getChildFragmentManager(), android.R.id.tabcontent);
 

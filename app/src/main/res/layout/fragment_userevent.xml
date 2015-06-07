@@ -28,7 +28,6 @@
         android:layout_below="@+id/profileImage"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:text="profileName"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -39,8 +38,7 @@
         android:layout_below="@+id/profileName"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:paddingBottom="56dp"
-        android:text="profileDescription" />
+        android:paddingBottom="56dp" />
 
     <android.support.v4.app.FragmentTabHost
         android:id="@+id/tabHost"
