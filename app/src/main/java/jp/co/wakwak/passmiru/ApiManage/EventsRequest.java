@@ -45,7 +45,6 @@ public class EventsRequest {
     // calledByはどのメソッドから呼び出されたかで、EventBusの分岐を作成している。
     // 1 = onActivityCreated, 2 = onRefresh
     public void getEvents(int start, int order, final int calledBy) {
-
         events = new ArrayList<Event>();
         final String url = "http://connpass.com/api/v1/event/?start=" + start + "&order=" + order + "&count=10";
         Log.d(TAG, "getEvent...");

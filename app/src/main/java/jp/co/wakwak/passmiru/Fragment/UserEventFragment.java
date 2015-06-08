@@ -18,12 +18,20 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
+import jp.co.wakwak.passmiru.Adapter.CreatedEventListAdapter;
+import jp.co.wakwak.passmiru.Adapter.JoinEventListAdapter;
+import jp.co.wakwak.passmiru.ApiManage.UserEventRequest;
 import jp.co.wakwak.passmiru.ApiManage.UserInformationScraper;
+import jp.co.wakwak.passmiru.Bus.HideFragmentBus;
 import jp.co.wakwak.passmiru.Bus.UserInfoBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
+import jp.co.wakwak.passmiru.Data.CreatedEvent;
+import jp.co.wakwak.passmiru.Data.JoinEvent;
 import jp.co.wakwak.passmiru.R;
 
 /**
@@ -44,13 +52,24 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
     @InjectView(R.id.coverImage)
     ImageView covetImageView;
 
-    UserInformationScraper userInformationScraper;
-    SharedPreferences sharedPreferences;
+    private UserInformationScraper userInformationScraper;
+    private SharedPreferences sharedPreferences;
+
+    private FragmentManager fm;
+    private FragmentTransaction ft;
+    private UserNameEditFragment userNameEditFragment;
+
+    private UserEventRequest joinEventReq;
+    private UserEventRequest createdEventReq;
+    private JoinEventListAdapter joinEventListAdapter;
+    private CreatedEventListAdapter createdEventListAdapter;
+
+    private ArrayList<JoinEvent> joinEvents;
+    private ArrayList<CreatedEvent> createdEvents;
 
     private String userName;
 
-    private Context context = AppController.getContext();
-
+    private static final Context context = AppController.getContext();
     private static final String PREF_KEY = "USER_NAME";
     private static final String KEY_USER_NAME = "name";
 
@@ -63,16 +82,35 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
         super.onCreate(savedInstanceState);
         sharedPreferences = getActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
         userName = sharedPreferences.getString(KEY_USER_NAME, null);
+
+        joinEvents = new ArrayList<JoinEvent>();
+        createdEvents = new ArrayList<CreatedEvent>();
+
+        joinEventListAdapter    = new JoinEventListAdapter(context, joinEvents);
+        createdEventListAdapter = new CreatedEventListAdapter(context, createdEvents);
+
+        joinEventReq       = new UserEventRequest(joinEventListAdapter);
+        createdEventReq    = new UserEventRequest(createdEventListAdapter);
+
         if (userName == null) {
-            FragmentManager fm = getChildFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            UserNameEditFragment userNameEditFragment = new UserNameEditFragment();
+            fm = getChildFragmentManager();
+            ft = fm.beginTransaction();
+            userNameEditFragment = new UserNameEditFragment();
             ft.add(R.id.container, userNameEditFragment, null);
             ft.commit();
         } else {
+            HideEditFragment();
             userInformationScraper = new UserInformationScraper(userName);
         }
         EventBus.getDefault().register(this);
+    }
+
+    public void HideEditFragment(){
+        fm = getChildFragmentManager();
+        ft = fm.beginTransaction();
+        userNameEditFragment = new UserNameEditFragment();
+        ft.remove(userNameEditFragment);
+        ft.commit();
     }
 
     @Override
@@ -127,6 +165,16 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
             Picasso.with(AppController.getContext()).load(infoBus.getProfileImgUrl()).into(mProfileImage);
         } else {
             Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onEvent(HideFragmentBus hideFragmentBus) {
+        if (hideFragmentBus.isSuccess()) {
+            joinEventReq.getUserEvent();
+            createdEventReq.getCreatedEvent();
+            userInformationScraper = new UserInformationScraper(userName);
+            userInformationScraper.execute();
+            HideEditFragment();
         }
     }
 }

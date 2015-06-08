@@ -53,7 +53,6 @@ dependencies {
     compile 'com.android.support:support-annotations:22.1.1'
     compile 'com.mcxiaoke.volley:library:1.0.15'
     compile 'com.fasterxml.jackson.core:jackson-core:2.5.3'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.5.3'
     compile 'com.fasterxml.jackson:jackson-parent:2.5.1'
     compile 'com.jpardogo.materialtabstrip:library:1.0.9'
@@ -64,6 +63,5 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.google.android.gms:play-services:7.3.0'
     compile 'com.deploygate:sdk:3.1'
-    compile 'io.realm:realm-android:0.80.0'
     compile 'com.beardedhen:androidbootstrap:1.2.2'
 }

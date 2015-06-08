@@ -2,13 +2,9 @@ package jp.co.wakwak.passmiru.Data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CreatedEvent extends RealmObject {
+public class CreatedEvent {
 
-    @PrimaryKey
     private int      event_id;
     private String   title;
 

@@ -18,7 +18,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:background="#fff5f5f5"
         android:contentDescription="ProfileImage" />
 
     <TextView
@@ -62,7 +61,7 @@
             <FrameLayout
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></FrameLayout>
+                android:layout_height="match_parent" />
         </LinearLayout>
     </android.support.v4.app.FragmentTabHost>
     <FrameLayout

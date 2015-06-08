@@ -11,9 +11,11 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.JoinEventListAdapter;
 import jp.co.wakwak.passmiru.ApiManage.EventDetailRequest;
 import jp.co.wakwak.passmiru.ApiManage.UserEventRequest;
+import jp.co.wakwak.passmiru.Bus.RelodeJoinListBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.JoinEvent;
 import jp.co.wakwak.passmiru.R;
@@ -36,6 +38,7 @@ public class JoinEventListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -89,4 +92,10 @@ public class JoinEventListFragment extends ListFragment {
         public void onFragmentInteraction(String id);
     }
 
+    public void onEvent(RelodeJoinListBus joinListBus) {
+        if (joinListBus.isSuccess()){
+            userEventRequest.getUserEvent();
+            joinEventListAdapter.notifyDataSetChanged();
+        }
+    }
 }

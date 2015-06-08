@@ -1,5 +1,7 @@
 package jp.co.wakwak.passmiru.ApiManage;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import com.android.volley.Request;
@@ -35,7 +37,12 @@ public class UserEventRequest {
     private ArrayList<JoinEvent> joinEventsArrayList;
     private ArrayList<CreatedEvent> createdEvents;
 
+    private SharedPreferences sharedPreferences;
+    private static Context context = AppController.getContext();
+
     private String userName;
+    private static final String PREF_KEY = "USER_NAME";
+    private static final String KEY_USER_NAME = "name";
 
     public UserEventRequest(JoinEventListAdapter joinEventListAdapter) {
         this.joinEventListAdapter = joinEventListAdapter;
@@ -47,6 +54,8 @@ public class UserEventRequest {
 
     // ユーザーが参加したイベントのリクエスト
     public void getUserEvent() {
+        sharedPreferences = context.getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
+        userName = sharedPreferences.getString(KEY_USER_NAME, null);
         joinEventsArrayList = new ArrayList<JoinEvent>();
         String url = "http://connpass.com/api/v1/event/?nickname=" + userName;
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
@@ -96,6 +105,8 @@ public class UserEventRequest {
 
     // ユーザーが企画したイベントのリクエスト
     public void getCreatedEvent() {
+        sharedPreferences = context.getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
+        userName = sharedPreferences.getString(KEY_USER_NAME, null);
         String url = "http://connpass.com/api/v1/event/?owner_nickname=" + userName;
         createdEvents = new ArrayList<CreatedEvent>();
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
