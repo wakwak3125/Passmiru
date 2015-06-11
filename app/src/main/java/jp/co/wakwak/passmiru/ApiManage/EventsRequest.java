@@ -118,8 +118,8 @@ public class EventsRequest {
             String imgUrl = null;
             try {
                 Document document = Jsoup.connect(eventUrl).get();
-                Elements elements = document.select("meta[itemprop=image]");
-                imgUrl = elements.attr("content");
+                Elements elements = document.select("div.group_inner.event_header_area").select("a");
+                imgUrl = elements.attr("href");
                 event.setImgUrl(imgUrl);
             } catch (IOException e) {
                 e.printStackTrace();

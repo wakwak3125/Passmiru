@@ -39,7 +39,6 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     private EventsRequest eventsRequest;
     private EventDetailRequest eventDetailRequest;
 
-    private ArrayList<Event> events;
     private EventListAdapter adapter;
     private ListView mListView;
     private View mFooter;
@@ -89,7 +88,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        events = new ArrayList<Event>();
+        ArrayList<Event> events = new ArrayList<Event>();
         adapter = new EventListAdapter(getActivity(), events);
         setListAdapter(adapter);
 
@@ -227,7 +226,6 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     public void onEvent(SwipeFinishBus finishBus) {
         if (finishBus.isSuccess()) {
             refreshLayout.setRefreshing(false);
-            // mFooter.setVisibility(View.VISIBLE);
             Log.d(TAG, "setRefreshing(false)");
         } else {
             Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();

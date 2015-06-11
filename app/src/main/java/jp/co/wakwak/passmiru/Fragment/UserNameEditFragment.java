@@ -26,7 +26,6 @@ import jp.co.wakwak.passmiru.R;
 public class UserNameEditFragment extends Fragment {
 
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     private static final String PREF_KEY = "USER_NAME";
     private static final String KEY_USER_NAME = "name";
 
@@ -59,7 +58,7 @@ public class UserNameEditFragment extends Fragment {
 
     @OnClick(R.id.submitButton)
     public void Edit() {
-        editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEY_USER_NAME, mUserNameEdit.getText().toString());
         editor.apply();
         EventBus.getDefault().post(new HideFragmentBus(true));

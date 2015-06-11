@@ -39,7 +39,6 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
     private EventSearchRequest searchRequest;
     private SearchResultDetailRequest detailRequest;
 
-    private ArrayList<SearchResult> results;
     private SearchResultListAdapter adapter;
     private ListView mListView;
 
@@ -95,7 +94,7 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        results = new ArrayList<SearchResult>();
+        ArrayList<SearchResult> results = new ArrayList<SearchResult>();
         adapter = new SearchResultListAdapter(getActivity(), results);
         setListAdapter(adapter);
 

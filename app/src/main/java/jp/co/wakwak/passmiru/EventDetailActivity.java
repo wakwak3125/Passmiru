@@ -45,8 +45,6 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
 
     Intent intent;
     private int mParallaxImageHeight;
-    private Double lat;
-    private Double lon;
     private String eventID;
     private String eventType;
 
@@ -112,7 +110,13 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
 
         mParallaxImageHeight = getResources().getDimensionPixelSize(R.dimen.parallax_image_height);
 
-        Picasso.with(this).load(imgUrl).into(mEventImage);
+
+
+        if (imgUrl == null || imgUrl.equals("")) {
+            Picasso.with(this).load(R.drawable.coverimageblur).into(mEventImage);
+        } else {
+            Picasso.with(this).load(imgUrl).into(mEventImage);
+        }
 
         // 各アイテムをViewにセット
         mTitle.setText(title);
@@ -152,8 +156,8 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         } else {
 
             // 取得できた場合は通常処理
-            lat = Double.parseDouble(sLat);
-            lon = Double.parseDouble(sLon);
+            Double lat = Double.parseDouble(sLat);
+            Double lon = Double.parseDouble(sLon);
 
             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             googleMap.setMyLocationEnabled(false);

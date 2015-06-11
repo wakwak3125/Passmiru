@@ -22,11 +22,8 @@ public class SearchResultActivity extends AppCompatActivity implements SearchRes
     @InjectView(R.id.container)
     FrameLayout mContainer;
 
-    private FragmentManager fm;
-    private FragmentTransaction ft;
     private SearchResultListFragment searchResultListFragment;
     private static final String KEY_WORD = "KEY_WORD";
-    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +35,10 @@ public class SearchResultActivity extends AppCompatActivity implements SearchRes
         getSupportActionBar().setTitle("検索結果");
         mToolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
 
-        intent = getIntent();
+        Intent intent = getIntent();
         String mKeyword = intent.getStringExtra(KEY_WORD);
 
-        fm = getSupportFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         ListFragment listFragment = new SearchResultListFragment();
 
         // 取得した検索単語をfragmentに渡す処理
@@ -49,7 +46,7 @@ public class SearchResultActivity extends AppCompatActivity implements SearchRes
         args.putString(KEY_WORD, mKeyword);
         listFragment.setArguments(args);
 
-        ft = fm.beginTransaction();
+        FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.container, listFragment);
         ft.commit();
     }

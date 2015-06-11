@@ -22,10 +22,6 @@ public class CreatedEventListFragment extends ListFragment {
 
     private OnFragmentInteractionListener   mListener;
 
-    private UserEventRequest                userEventRequest;
-    private EventDetailRequest              eventDetailRequest;
-
-    private ArrayList<CreatedEvent>         createdEvents;
     private CreatedEventListAdapter         createdEventListAdapter;
 
     private Context                         context     = AppController.getContext();
@@ -50,15 +46,15 @@ public class CreatedEventListFragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
         setListAdapter(createdEventListAdapter);
         // ユーザー作成イベントリストの初期化
-        createdEvents           = new ArrayList<CreatedEvent>();
+        ArrayList<CreatedEvent> createdEvents = new ArrayList<CreatedEvent>();
         // イベントの詳細情報取得リクエストの初期化
-        eventDetailRequest      = new EventDetailRequest();
+        EventDetailRequest eventDetailRequest = new EventDetailRequest();
         // アダプターの初期化
         createdEventListAdapter = new CreatedEventListAdapter(context, createdEvents);
         // アダプターをセット
         setListAdapter(createdEventListAdapter);
         // ユーザー情報に基づくイベントリクエストの初期化
-        userEventRequest        = new UserEventRequest(createdEventListAdapter);
+        UserEventRequest userEventRequest = new UserEventRequest(createdEventListAdapter);
         // ユーザーが作成したイベントのリクエストを実行
         userEventRequest.getCreatedEvent();
     }
@@ -87,7 +83,7 @@ public class CreatedEventListFragment extends ListFragment {
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        void onFragmentInteraction(String id);
     }
 
 }

@@ -53,7 +53,6 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
     ImageView covetImageView;
 
     private UserInformationScraper userInformationScraper;
-    private SharedPreferences sharedPreferences;
 
     private FragmentManager fm;
     private FragmentTransaction ft;
@@ -61,11 +60,6 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
 
     private UserEventRequest joinEventReq;
     private UserEventRequest createdEventReq;
-    private JoinEventListAdapter joinEventListAdapter;
-    private CreatedEventListAdapter createdEventListAdapter;
-
-    private ArrayList<JoinEvent> joinEvents;
-    private ArrayList<CreatedEvent> createdEvents;
 
     private String userName;
 
@@ -80,14 +74,14 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences = getActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
         userName = sharedPreferences.getString(KEY_USER_NAME, null);
 
-        joinEvents = new ArrayList<JoinEvent>();
-        createdEvents = new ArrayList<CreatedEvent>();
+        ArrayList<JoinEvent> joinEvents = new ArrayList<JoinEvent>();
+        ArrayList<CreatedEvent> createdEvents = new ArrayList<CreatedEvent>();
 
-        joinEventListAdapter    = new JoinEventListAdapter(context, joinEvents);
-        createdEventListAdapter = new CreatedEventListAdapter(context, createdEvents);
+        JoinEventListAdapter joinEventListAdapter = new JoinEventListAdapter(context, joinEvents);
+        CreatedEventListAdapter createdEventListAdapter = new CreatedEventListAdapter(context, createdEvents);
 
         joinEventReq       = new UserEventRequest(joinEventListAdapter);
         createdEventReq    = new UserEventRequest(createdEventListAdapter);

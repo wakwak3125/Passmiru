@@ -18,7 +18,6 @@ public class UserInformationScraper extends AsyncTask<Void, Void, Void> {
     private String userName;
     private String profileImgUrl;
     private String profileDescription;
-    private static String url = "http://connpass.com/user/";
 
     public UserInformationScraper(String userNickName) {
         this.userNickName = userNickName;
@@ -29,6 +28,7 @@ public class UserInformationScraper extends AsyncTask<Void, Void, Void> {
         userName = null;
         profileImgUrl = null;
 
+        String url = "http://connpass.com/user/";
         try {
             Document document = Jsoup.connect(url + userNickName).get();
             Elements elements = document.select("div#side_area").select("a[class=image_link]");

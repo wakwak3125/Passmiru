@@ -25,12 +25,12 @@ public class JoinEventListFragment extends ListFragment {
     private OnFragmentInteractionListener   mListener;
 
     private UserEventRequest                userEventRequest;
-    private EventDetailRequest              eventDetailRequest;
 
-    private ArrayList<JoinEvent>            joinEvents;
     private JoinEventListAdapter            joinEventListAdapter;
 
     private Context                         context     = AppController.getContext();
+
+    private EventDetailRequest eventDetailRequest;
 
     public JoinEventListFragment() {
     }
@@ -52,7 +52,7 @@ public class JoinEventListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // ユーザー作成イベントリストの初期化
-        joinEvents              = new ArrayList<JoinEvent>();
+        ArrayList<JoinEvent> joinEvents = new ArrayList<JoinEvent>();
         // アダプターの初期化
         joinEventListAdapter    = new JoinEventListAdapter(context, joinEvents);
         // アダプターをセット
@@ -60,7 +60,7 @@ public class JoinEventListFragment extends ListFragment {
         // ユーザー情報に基づくイベントリクエストの初期化
         userEventRequest        = new UserEventRequest(joinEventListAdapter);
         // イベントの詳細情報取得リクエストの初期化
-        eventDetailRequest      = new EventDetailRequest();
+        eventDetailRequest = new EventDetailRequest();
         // ユーザーが参加したイベントのリクエスト
         userEventRequest.getUserEvent();
     }
