@@ -27,7 +27,6 @@ public class AppController extends Application {
     private ImageLoader mImageLoader;
     private static AppController mInstance;
     private static Context mContext;
-    private SharedPreferences sharedPreferences;
 
     @Override
     public void onCreate() {
@@ -36,12 +35,12 @@ public class AppController extends Application {
         mContext = getApplicationContext();
         DeployGate.install(this);
 
-        sharedPreferences = getSharedPreferences("USER_SETTING", Context.MODE_PRIVATE);
-        String userName = sharedPreferences.getString("USER_NAME","");
+        SharedPreferences sharedPreferences = getSharedPreferences("USER_SETTING", Context.MODE_PRIVATE);
+        String userName = sharedPreferences.getString("USER_NAME", "");
         Log.d(TAG, userName);
 
         if (userName == null) {
-            Log.d(TAG, "ユーザーネーム無いで！");
+            Log.i(TAG, "ユーザーネーム無いで！");
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
         }
