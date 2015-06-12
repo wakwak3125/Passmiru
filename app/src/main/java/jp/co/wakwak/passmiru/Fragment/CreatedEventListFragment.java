@@ -2,6 +2,7 @@ package jp.co.wakwak.passmiru.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import jp.co.wakwak.passmiru.Adapter.CreatedEventListAdapter;
 import jp.co.wakwak.passmiru.ApiManage.EventDetailRequest;
 import jp.co.wakwak.passmiru.ApiManage.UserEventRequest;
+import jp.co.wakwak.passmiru.Bus.HideFragmentBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.CreatedEvent;
 import jp.co.wakwak.passmiru.R;
@@ -29,6 +31,9 @@ public class CreatedEventListFragment extends ListFragment {
     private CreatedEventListAdapter         createdEventListAdapter;
 
     private Context                         context     = AppController.getContext();
+
+    private static final String             PREF_KEY = "USER_NAME";
+    private static final String             KEY_USER_NAME = "name";
 
     public CreatedEventListFragment() {
     }
@@ -60,7 +65,16 @@ public class CreatedEventListFragment extends ListFragment {
         // ユーザー情報に基づくイベントリクエストの初期化
         userEventRequest        = new UserEventRequest(createdEventListAdapter);
         // ユーザーが作成したイベントのリクエストを実行
-        userEventRequest.getCreatedEvent();
+
+        SharedPreferences preferences = getActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
+        String userName = preferences.getString(KEY_USER_NAME, null);
+
+        if (userName == null || userName.isEmpty() || userName.equals("")) {
+            // 何もしない
+            System.out.println("USER NAME IS NULL OR EMPTY.");
+        } else {
+            userEventRequest.getCreatedEvent();
+        }
     }
 
     @Override
@@ -88,6 +102,14 @@ public class CreatedEventListFragment extends ListFragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
+    }
+
+    public void onEvent(HideFragmentBus hideFragmentBus) {
+        if (hideFragmentBus.isSuccess()){
+            userEventRequest.getUserEvent();
+            createdEventListAdapter.clear();
+            createdEventListAdapter.notifyDataSetChanged();
+        }
     }
 
 }

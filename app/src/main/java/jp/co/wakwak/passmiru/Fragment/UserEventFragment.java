@@ -107,9 +107,8 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
 
     public void HideEditFragment(){
         fm = getChildFragmentManager();
-        ft = fm.beginTransaction();
         userNameEditFragment = new UserNameEditFragment();
-        ft.remove(userNameEditFragment);
+        ft = fm.beginTransaction().hide(userNameEditFragment);
         ft.commit();
     }
 
@@ -158,7 +157,6 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
     }
 
     public void onEvent(UserInfoBus infoBus) {
-
         if (infoBus.isSuccess()) {
             mProfileName.setText(infoBus.getUserName());
             mProfileDescription.setText(infoBus.getProfileDescription());
@@ -170,6 +168,7 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
 
     public void onEvent(HideFragmentBus hideFragmentBus) {
         if (hideFragmentBus.isSuccess()) {
+            userName = sharedPreferences.getString(KEY_USER_NAME, null);
             joinEventReq.getUserEvent();
             createdEventReq.getCreatedEvent();
             userInformationScraper = new UserInformationScraper(userName);

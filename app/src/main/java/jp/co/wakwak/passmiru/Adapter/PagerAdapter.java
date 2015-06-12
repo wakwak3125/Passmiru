@@ -3,6 +3,9 @@ package jp.co.wakwak.passmiru.Adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.view.ViewGroup;
 
 import jp.co.wakwak.passmiru.Fragment.EventListFragment;
 import jp.co.wakwak.passmiru.Fragment.UserEventFragment;
@@ -12,7 +15,7 @@ import jp.co.wakwak.passmiru.Fragment.UserEventFragment;
  */
 public class PagerAdapter extends FragmentPagerAdapter {
 
-    private final String[] TITLES = {"LIST", "MY PAGE"};
+    private final String[] TITLES = {"新着イベント", "マイページ"};
 
     public PagerAdapter(FragmentManager fm) {
         super(fm);
@@ -41,4 +44,35 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return TITLES.length;
     }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
+    public void destroyAllItem(ViewPager pager) {
+        for (int i = 0; i < getCount() - 1; i++) {
+
+            try {
+                Object object = this.instantiateItem(pager, i);
+                if (object != null) {
+                    destroyItem(pager, i, object);
+                }
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        super.destroyItem(container, position, object);
+
+        if (position <= getCount()) {
+            FragmentManager fm = ((Fragment) object).getFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.remove((Fragment) object);
+            ft.commit();
+        }
+    }
+
 }

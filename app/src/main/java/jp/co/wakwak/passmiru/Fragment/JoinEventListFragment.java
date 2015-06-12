@@ -2,6 +2,7 @@ package jp.co.wakwak.passmiru.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.JoinEventListAdapter;
 import jp.co.wakwak.passmiru.ApiManage.EventDetailRequest;
 import jp.co.wakwak.passmiru.ApiManage.UserEventRequest;
+import jp.co.wakwak.passmiru.Bus.HideFragmentBus;
 import jp.co.wakwak.passmiru.Bus.RelodeJoinListBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.JoinEvent;
@@ -31,6 +33,9 @@ public class JoinEventListFragment extends ListFragment {
     private JoinEventListAdapter            joinEventListAdapter;
 
     private Context                         context     = AppController.getContext();
+
+    private static final String             PREF_KEY = "USER_NAME";
+    private static final String             KEY_USER_NAME = "name";
 
     public JoinEventListFragment() {
     }
@@ -62,7 +67,15 @@ public class JoinEventListFragment extends ListFragment {
         // イベントの詳細情報取得リクエストの初期化
         eventDetailRequest      = new EventDetailRequest();
         // ユーザーが参加したイベントのリクエスト
-        userEventRequest.getUserEvent();
+        SharedPreferences preferences = getActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
+        String userName = preferences.getString(KEY_USER_NAME, null);
+
+        if (userName == null || userName.isEmpty() || userName.equals("")) {
+            // 何もしない
+            System.out.println("USER NAME IS NULL OR EMPTY.");
+        } else {
+            userEventRequest.getUserEvent();
+        }
     }
 
     @Override
@@ -92,9 +105,10 @@ public class JoinEventListFragment extends ListFragment {
         public void onFragmentInteraction(String id);
     }
 
-    public void onEvent(RelodeJoinListBus joinListBus) {
-        if (joinListBus.isSuccess()){
+    public void onEvent(HideFragmentBus hideFragmentBus) {
+        if (hideFragmentBus.isSuccess()){
             userEventRequest.getUserEvent();
+            joinEventListAdapter.clear();
             joinEventListAdapter.notifyDataSetChanged();
         }
     }

@@ -33,6 +33,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.nineoldandroids.view.ViewHelper;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,23 +86,22 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         setContentView(R.layout.activity_event_detail);
         ButterKnife.inject(this);
 
-        intent = getIntent();
-        eventID = intent.getStringExtra("eventID");
-        String description = intent.getStringExtra("description");
-        String imgUrl = intent.getStringExtra("imgUrl");
-        String title = intent.getStringExtra("title");
-        String updated_at = intent.getStringExtra("updated_at");
-        String catchMsg = intent.getStringExtra("catch");
-        String place = intent.getStringExtra("eventPlace");
-        String sLat = intent.getStringExtra("lat");
-        String sLon = intent.getStringExtra("lon");
-        String startedAt = intent.getStringExtra("startedAt");
-        String address = intent.getStringExtra("address");
-        String ownerNickName = intent.getStringExtra("ownerNickName");
+        intent                  = getIntent();
+        eventID                 = intent.getStringExtra("eventID");
+        String description      = intent.getStringExtra("description");
+        String imgUrl           = intent.getStringExtra("imgUrl");
+        String title            = intent.getStringExtra("title");
+        String updated_at       = intent.getStringExtra("updated_at");
+        String catchMsg         = intent.getStringExtra("catch");
+        String place            = intent.getStringExtra("eventPlace");
+        String sLat             = intent.getStringExtra("lat");
+        String sLon             = intent.getStringExtra("lon");
+        String startedAt        = intent.getStringExtra("startedAt");
+        String address          = intent.getStringExtra("address");
+        String ownerNickName    = intent.getStringExtra("ownerNickName");
         String ownerDisplayName = intent.getStringExtra("ownerDisplayName");
-        final String hashTag = intent.getStringExtra("hashTag");
-        eventType = intent.getStringExtra("eventType");
-
+        final String hashTag    = intent.getStringExtra("hashTag");
+        eventType               = intent.getStringExtra("eventType");
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(title);
@@ -112,7 +112,12 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
 
         mParallaxImageHeight = getResources().getDimensionPixelSize(R.dimen.parallax_image_height);
 
-        Picasso.with(this).load(imgUrl).into(mEventImage);
+        try {
+            Picasso.with(this).load(imgUrl).into(mEventImage);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            Picasso.with(this).load(R.drawable.noimage).into(mEventImage);
+        }
 
         // 各アイテムをViewにセット
         mTitle.setText(title);

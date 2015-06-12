@@ -59,6 +59,7 @@ public class EventListAdapter extends ArrayAdapter<Event> {
 
         Event event = getItem(position);
         String limit = event.getLimit();
+        String imgUrl = event.getImgUrl();
 
         holder.title.setText(event.getTitle());
         if (limit.equals("null")) {
@@ -70,7 +71,10 @@ public class EventListAdapter extends ArrayAdapter<Event> {
         holder.accepted.setText(event.getAccepted());
         holder.ownerNickname.setText(event.getOwner_nickname());
         holder.updateDate.setText(event.getUpdated_at());
-        holder.listImage.setImageUrl(event.getImgUrl(), AppController.getInstance().getImageLoader());
+
+        holder.listImage.setDefaultImageResId(R.drawable.noimage);
+        holder.listImage.setErrorImageResId(R.drawable.noimage);
+        holder.listImage.setImageUrl(imgUrl, AppController.getInstance().getImageLoader());
 
         return convertView;
     }

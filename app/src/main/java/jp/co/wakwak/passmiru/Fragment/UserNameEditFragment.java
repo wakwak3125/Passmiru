@@ -63,6 +63,10 @@ public class UserNameEditFragment extends Fragment {
         editor.putString(KEY_USER_NAME, mUserNameEdit.getText().toString());
         editor.apply();
         EventBus.getDefault().post(new HideFragmentBus(true));
+        DestroyMySelf();
     }
 
+    public void DestroyMySelf() {
+        getFragmentManager().beginTransaction().remove(this).commit();
+    }
 }

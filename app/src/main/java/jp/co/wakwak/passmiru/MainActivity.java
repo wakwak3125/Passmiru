@@ -14,12 +14,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.google.android.gms.games.event.EventBuffer;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.EventListAdapter;
 import jp.co.wakwak.passmiru.Adapter.PagerAdapter;
 import jp.co.wakwak.passmiru.ApiManage.EventsRequest;
+import jp.co.wakwak.passmiru.Bus.HideFragmentBus;
+import jp.co.wakwak.passmiru.Data.Event;
 import jp.co.wakwak.passmiru.Fragment.CreatedEventListFragment;
 import jp.co.wakwak.passmiru.Fragment.EventListFragment;
 import jp.co.wakwak.passmiru.Fragment.JoinEventListFragment;
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity
         SearchResultListFragment.OnFragmentInteractionListener,
         JoinEventListFragment.OnFragmentInteractionListener,
         CreatedEventListFragment.OnFragmentInteractionListener{
+
     private static String TAG = MainActivity.class.getSimpleName();
 
     private PagerAdapter pagerAdapter;
@@ -60,11 +65,15 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+        EventBus.getDefault().isRegistered(this);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("passmiru");
+
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
+
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+        pager.setAdapter(pagerAdapter);
         tabStrip.setDividerColor(getResources().getColor(android.R.color.transparent));
         tabStrip.setTextColor(getResources().getColorStateList(R.color.tabcolors));
         tabStrip.setBackgroundColor(getResources().getColor(R.color.primary));
@@ -113,5 +122,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(String id) {
 
+    }
+
+    public void onEvent(HideFragmentBus hideFragmentBus) {
+        if (hideFragmentBus.isSuccess()) {
+            pagerAdapter.destroyAllItem(pager);
+            pagerAdapter.notifyDataSetChanged();
+            pager.setAdapter(pagerAdapter);
+        }
     }
 }
