@@ -30,6 +30,7 @@ import jp.co.wakwak.passmiru.ApiManage.UserInformationScraper;
 import jp.co.wakwak.passmiru.Bus.HideFragmentBus;
 import jp.co.wakwak.passmiru.Bus.UserInfoBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
+import jp.co.wakwak.passmiru.Commons.CircleTransform;
 import jp.co.wakwak.passmiru.Data.CreatedEvent;
 import jp.co.wakwak.passmiru.Data.JoinEvent;
 import jp.co.wakwak.passmiru.R;
@@ -51,6 +52,7 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
     FragmentTabHost mTabHost;
     @InjectView(R.id.coverImage)
     ImageView covetImageView;
+
 
     private UserInformationScraper userInformationScraper;
 
@@ -154,7 +156,7 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
         if (infoBus.isSuccess()) {
             mProfileName.setText(infoBus.getUserName());
             mProfileDescription.setText(infoBus.getProfileDescription());
-            Picasso.with(AppController.getContext()).load(infoBus.getProfileImgUrl()).into(mProfileImage);
+            Picasso.with(AppController.getContext()).load(infoBus.getProfileImgUrl()).transform(new CircleTransform()).into(mProfileImage);
         } else {
             Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
         }

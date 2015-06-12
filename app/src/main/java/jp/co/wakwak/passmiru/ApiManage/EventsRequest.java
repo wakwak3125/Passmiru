@@ -1,5 +1,7 @@
 package jp.co.wakwak.passmiru.ApiManage;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -36,6 +38,8 @@ public class EventsRequest {
     private EventListAdapter adapter;
     private ArrayList<Event> events;
     private Event event;
+    private static final String USER_PREF = "place_name";
+    private static final String PREF_LIST = "prefecture";
 
     public EventsRequest(EventListAdapter adapter) {
         this.adapter = adapter;
@@ -45,9 +49,11 @@ public class EventsRequest {
     // calledByはどのメソッドから呼び出されたかで、EventBusの分岐を作成している。
     // 1 = onActivityCreated, 2 = onRefresh
     public void getEvents(int start, int order, final int calledBy) {
+        SharedPreferences preferences = AppController.getContext().getSharedPreferences(USER_PREF, Context.MODE_PRIVATE);
+        String area = preferences.getString(PREF_LIST, "");
         events = new ArrayList<Event>();
-        final String url = "http://connpass.com/api/v1/event/?start=" + start + "&order=" + order + "&count=10";
-        Log.d(TAG, "getEvent...");
+        final String url = "http://connpass.com/api/v1/event/?" + "keyword_or=" + area + "&start=" + start + "&order=" + order + "&count=10";
+        Log.d(TAG, "getEvent..." + url);
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
                     @Override

@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,10 +30,13 @@ public class CreatedEventListFragment extends ListFragment {
     private CreatedEventListAdapter         createdEventListAdapter;
     private UserEventRequest                userEventRequest;
 
-    private Context                         context     = AppController.getContext();
+    private Context                         context         = AppController.getContext();
 
-    private static final String             PREF_KEY = "USER_NAME";
-    private static final String             KEY_USER_NAME = "name";
+    private static final String             PREF_KEY        = "USER_NAME";
+    private static final String             KEY_USER_NAME   = "name";
+
+    private static final String             ARGS_LIST_TYPE  = "listType";
+    private static final String             MSG_CREATED     = "企画したイベントがありません";
 
     public CreatedEventListFragment() {
     }
@@ -72,6 +78,12 @@ public class CreatedEventListFragment extends ListFragment {
         } else {
             userEventRequest.getCreatedEvent();
         }
+
+        if (createdEventListAdapter.isEmpty()){
+            ShowEmptyView();
+        } else {
+            HideEmptyView();
+        }
     }
 
     @Override
@@ -107,6 +119,34 @@ public class CreatedEventListFragment extends ListFragment {
             createdEventListAdapter.clear();
             createdEventListAdapter.notifyDataSetChanged();
         }
+
+        if (createdEventListAdapter.isEmpty()){
+            ShowEmptyView();
+        } else {
+            HideEmptyView();
+        }
     }
 
+    public void ShowEmptyView() {
+        if (createdEventListAdapter.isEmpty()){
+            EmptyFragment emptyFragment = new EmptyFragment();
+            Bundle args = new Bundle();
+            args.putString(ARGS_LIST_TYPE, MSG_CREATED);
+            emptyFragment.setArguments(args);
+            FragmentManager     fm = getChildFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.container, emptyFragment);
+            ft.commit();
+        }
+    }
+
+    public void HideEmptyView() {
+        if (!createdEventListAdapter.isEmpty()) {
+            EmptyFragment emptyFragment = new EmptyFragment();
+            FragmentManager     fm = getChildFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.remove(emptyFragment);
+            ft.commit();
+        }
+    }
 }

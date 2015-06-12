@@ -1,9 +1,12 @@
 package jp.co.wakwak.passmiru.Fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -18,23 +21,30 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.EventListAdapter;
 import jp.co.wakwak.passmiru.ApiManage.EventDetailRequest;
 import jp.co.wakwak.passmiru.ApiManage.EventsRequest;
 import jp.co.wakwak.passmiru.Bus.EventDetailBus;
 import jp.co.wakwak.passmiru.Bus.ListShowBus;
+import jp.co.wakwak.passmiru.Bus.PrefcSetResultBus;
 import jp.co.wakwak.passmiru.Bus.SwipeFinishBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.Event;
 import jp.co.wakwak.passmiru.EventDetailActivity;
 import jp.co.wakwak.passmiru.R;
 
+@SuppressWarnings("ResourceType")
 public class EventListFragment extends ListFragment implements AbsListView.OnScrollListener, SwipeRefreshLayout.OnRefreshListener {
 
     final static String TAG = EventListFragment.class.getSimpleName();
 
     private OnFragmentInteractionListener mListener;
+
+    private Context context = AppController.getContext();
 
     private EventsRequest eventsRequest;
     private EventDetailRequest eventDetailRequest;
@@ -54,6 +64,11 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     static final int INTERNAL_PROGRESS_CONTAINER_ID = 0x00ff0002;
     static final int INTERNAL_LIST_CONTAINER_ID = 0x00ff0003;
 
+    private static final String LOC_SET_MSG = "検索地域を設定します";
+
+    @InjectView(R.id.locSettingFAB)
+    FloatingActionButton mLocSettingFAB;
+
     public EventListFragment() {
     }
 
@@ -66,8 +81,11 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.event_list, container, false);
+        ButterKnife.inject(this, view);
+
+        mLocSettingFAB.setVisibility(View.GONE);
+
         ProgressBar pBar = (ProgressBar) view.findViewById(android.R.id.progress);
 
         LinearLayout pframe = (LinearLayout) pBar.getParent();
@@ -82,6 +100,13 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
         mFooter = inflater.inflate(R.layout.listfooter, container, false);
 
         return view;
+    }
+
+    @OnClick(R.id.locSettingFAB)
+    public void LocationStting() {
+        DialogFragment locSettingFragment = new LocationSettingDialog();
+        locSettingFragment.show(getChildFragmentManager(),null);
+        // Toast.makeText(context, LOC_SET_MSG, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -217,7 +242,6 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
 
     }
 
-
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(String id);
     }
@@ -233,11 +257,17 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     }
 
     public void onEvent(ListShowBus event) {
-
         if (event.isSuccess()) {
+            mLocSettingFAB.setVisibility(View.VISIBLE);
             setListShown(true);
         } else {
             Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onEvent(PrefcSetResultBus prefcSetResultBus) {
+        if (prefcSetResultBus.isSuccess()) {
+            updateList(adapter);
         }
     }
 

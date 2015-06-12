@@ -21,6 +21,17 @@
                 android:dividerHeight="8dp"
                 android:padding="8dp" />
         </android.support.v4.widget.SwipeRefreshLayout>
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/locSettingFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@android:drawable/ic_menu_myplaces" />
+
     </FrameLayout>
 
     <LinearLayout
