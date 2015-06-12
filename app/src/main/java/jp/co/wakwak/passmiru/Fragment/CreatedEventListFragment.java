@@ -25,6 +25,7 @@ public class CreatedEventListFragment extends ListFragment {
     private OnFragmentInteractionListener   mListener;
 
     private CreatedEventListAdapter         createdEventListAdapter;
+    private UserEventRequest                userEventRequest;
 
     private Context                         context     = AppController.getContext();
 
@@ -59,7 +60,7 @@ public class CreatedEventListFragment extends ListFragment {
         // アダプターをセット
         setListAdapter(createdEventListAdapter);
         // ユーザー情報に基づくイベントリクエストの初期化
-        UserEventRequest userEventRequest = new UserEventRequest(createdEventListAdapter);
+        userEventRequest = new UserEventRequest(createdEventListAdapter);
         // ユーザーが作成したイベントのリクエストを実行
 
         SharedPreferences preferences = getActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);

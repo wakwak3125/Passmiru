@@ -162,6 +162,7 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
 
     public void onEvent(HideFragmentBus hideFragmentBus) {
         if (hideFragmentBus.isSuccess()) {
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
             userName = sharedPreferences.getString(KEY_USER_NAME, null);
             joinEventReq.getUserEvent();
             createdEventReq.getCreatedEvent();
