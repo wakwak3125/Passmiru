@@ -3,37 +3,27 @@ package jp.co.wakwak.passmiru.Fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Bus.PrefcSetResultBus;
+import jp.co.wakwak.passmiru.Commons.CustomCheckedTextView;
 import jp.co.wakwak.passmiru.R;
 
 /**
@@ -77,9 +67,6 @@ public class LocationSettingDialog extends DialogFragment implements AdapterView
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         preferences = getActivity().getSharedPreferences(USER_PREF, Context.MODE_PRIVATE);
         final SharedPreferences.Editor editor = preferences.edit();
-        final SharedPreferences.Editor editor1 = preferences.edit();
-
-        CheckedTextView checkedTextView = (CheckedTextView) getActivity().findViewById(android.R.id.text1);
 
         mPrefList = new ListView(getActivity());
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_multiple_choice, prefList);
@@ -87,6 +74,12 @@ public class LocationSettingDialog extends DialogFragment implements AdapterView
 
         mPrefList.setItemsCanFocus(false);
         mPrefList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+
+        for (int i = 0; i < prefList.length; i++) {
+            Boolean checked;
+            checked = preferences.getBoolean(String.valueOf(mPrefList.getItemAtPosition(i)), false);
+            mPrefList.setItemChecked(i, checked);
+        }
 
         mPrefList.setOnItemClickListener(this);
         builder.setView(mPrefList);
@@ -102,12 +95,14 @@ public class LocationSettingDialog extends DialogFragment implements AdapterView
                             if (checked.valueAt(i)) {
                                 int key = checked.keyAt(i);
                                 String checkedItem = String.valueOf(mPrefList.getItemAtPosition(key));
+                                editor.putBoolean(String.valueOf(mPrefList.getItemAtPosition(key)), true);
                                 checkedPref.add(checkedItem);
                             }
                         }
+
                         String prefs = checkedPref.toString();
                         prefs = prefs.substring(1, prefs.length() - 1);
-                        prefs = prefs.replace(" ","");
+                        prefs = prefs.replace(" ", "");
                         Log.i(TAG, prefs);
                         editor.putString(PREF_LIST, prefs);
                         editor.apply();
@@ -121,7 +116,6 @@ public class LocationSettingDialog extends DialogFragment implements AdapterView
 
                             }
                         });
-
         return builder.create();
     }
 
