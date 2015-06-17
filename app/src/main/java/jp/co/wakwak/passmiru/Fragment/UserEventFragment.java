@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
@@ -88,11 +89,11 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
         joinEventReq       = new UserEventRequest(joinEventListAdapter);
         createdEventReq    = new UserEventRequest(createdEventListAdapter);
 
-        if (userName == null) {
+        if (userName == null || userName.isEmpty() || userName.equals("") || userName.equals(" ") || userName.equals("　")) {
             fm = getChildFragmentManager();
             ft = fm.beginTransaction();
             userNameEditFragment = new UserNameEditFragment();
-            ft.add(R.id.container, userNameEditFragment, null);
+            ft.add(R.id.container, userNameEditFragment);
             ft.commit();
         } else {
             HideEditFragment();
@@ -125,8 +126,10 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
         TabHost.TabSpec createdTab = mTabHost.newTabSpec("createdTab").setIndicator("企画");
         mTabHost.addTab(createdTab, CreatedEventListFragment.class, null);
 
-        if (userName != null) {
+        try {
             userInformationScraper.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return view;
@@ -151,6 +154,7 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(String id);
     }
+
 
     public void onEvent(UserInfoBus infoBus) {
         if (infoBus.isSuccess()) {

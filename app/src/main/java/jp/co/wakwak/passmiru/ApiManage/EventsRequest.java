@@ -19,7 +19,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.SimpleTimeZone;
 
 import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.EventListAdapter;
@@ -44,16 +50,17 @@ public class EventsRequest {
     public EventsRequest(EventListAdapter adapter) {
         this.adapter = adapter;
     }
+
     // 引数のstartは検索の出力開始位置(例:1であれば1件目から出力する)
     // orderには1,2,3のどれかを渡す。説明はリファレンスページで確認。
     // calledByはどのメソッドから呼び出されたかで、EventBusの分岐を作成している。
-    // 1 = onActivityCreated, 2 = onRefresh
+    // 1 = onActivityCreated, 2 = onRefresh, 3 = スクロールのやつから
     public void getEvents(int start, int order, final int calledBy) {
         SharedPreferences preferences = AppController.getContext().getSharedPreferences(USER_PREF, Context.MODE_PRIVATE);
         String area = preferences.getString(PREF_LIST, "");
         events = new ArrayList<Event>();
         final String url = "http://connpass.com/api/v1/event/?" + "keyword_or=" + area + "&start=" + start + "&order=" + order + "&count=10";
-        Log.d(TAG, "getEvent..." + url);
+        Log.i(TAG, "getEvent..." + url);
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -63,13 +70,30 @@ public class EventsRequest {
                             for (int i = 0; i < connpassEvents.length(); i++) {
                                 JSONObject connpassEvent = connpassEvents.getJSONObject(i);
 
-                                int event_id = connpassEvent.getInt("event_id");
-                                String title = connpassEvent.getString("title");
-                                String event_url = connpassEvent.getString("event_url");
-                                String limit = connpassEvent.getString("limit");
-                                String accepted = connpassEvent.getString("accepted");
-                                String owner_nickname = connpassEvent.getString("owner_nickname");
-                                String updated_at = connpassEvent.getString("updated_at");
+                                int event_id            = connpassEvent.getInt("event_id");
+                                String title            = connpassEvent.getString("title");
+                                String event_url        = connpassEvent.getString("event_url");
+                                String limit            = connpassEvent.getString("limit");
+                                String accepted         = connpassEvent.getString("accepted");
+                                String owner_nickname   = connpassEvent.getString("owner_nickname");
+                                String updated_at       = connpassEvent.getString("updated_at");
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.JAPANESE);
+                                Date date = null;
+
+                                try {
+                                    date = sdf.parse(updated_at);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+                                updated_at = sdf.format(date);
+
+                                /*try {
+                                    date = sdf.parse(updated_at);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }*/
 
                                 event = new Event();
                                 event.setEvent_id(event_id);
@@ -86,13 +110,20 @@ public class EventsRequest {
                             }
 
                             if (calledBy == 1) {
+                                // 起動時に呼ばれたらこっち
                                 adapter.addAll(events);
+                                adapter.notifyDataSetChanged();
                                 EventBus.getDefault().post(new ListShowBus(true));
                             } else if (calledBy == 2) {
+                                // 引っ張って更新の時こっち
                                 adapter.clear();
                                 adapter.addAll(events);
                                 adapter.notifyDataSetChanged();
                                 EventBus.getDefault().post(new SwipeFinishBus(true));
+                            } else if (calledBy == 3) {
+                                // スクロールで追加読み込みの時こっち
+                                adapter.addAll(events);
+                                adapter.notifyDataSetChanged();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -119,6 +150,7 @@ public class EventsRequest {
             this.eventUrl = eventUrl;
             this.adapter = adapter;
         }
+
         @Override
         protected String doInBackground(Void... params) {
             String imgUrl = null;
@@ -132,6 +164,7 @@ public class EventsRequest {
             }
             return imgUrl;
         }
+
         @Override
         protected void onPostExecute(String imgUrl) {
             super.onPostExecute(imgUrl);

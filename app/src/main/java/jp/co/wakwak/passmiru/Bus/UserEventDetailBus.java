@@ -1,7 +1,7 @@
 package jp.co.wakwak.passmiru.Bus;
 
-public class SearchResultBus {
-    final static String TAG = SearchResultBus.class.getSimpleName();
+public class UserEventDetailBus {
+    final static String TAG = UserEventDetailBus.class.getSimpleName();
 
     private boolean success;
     private int eventId;
@@ -20,23 +20,24 @@ public class SearchResultBus {
     private String hashTag;
     private String eventType;
 
-    public SearchResultBus(boolean success, int eventId, String eventTitle, String description, String imgUrl, String updated_at, String catchMsg, String eventPlace, String latitude, String longitude, String startedAt, String address, String ownerNickname, String ownerDisplayName, String hashTag, String eventType) {
-        this.success = success;
-        this.eventId = eventId;
-        this.eventTitle = eventTitle;
-        this.description = description;
-        this.imgUrl = imgUrl;
-        this.updated_at = updated_at;
-        this.catchMsg = catchMsg;
-        this.eventPlace = eventPlace;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.startedAt = startedAt;
-        this.address = address;
-        this.ownerNickname = ownerNickname;
+    public UserEventDetailBus(boolean success, int eventId, String eventTitle, String description, String imgUrl, String updated_at, String catchMsg, String eventPlace, String latitude, String longitude, String startedAt,
+                              String address, String ownerNickname, String ownerDisplayName, String hashTag, String eventType) {
+        this.success          = success;
+        this.eventId          = eventId;
+        this.eventTitle       = eventTitle;
+        this.description      = description;
+        this.imgUrl           = imgUrl;
+        this.updated_at       = updated_at;
+        this.catchMsg         = catchMsg;
+        this.eventPlace       = eventPlace;
+        this.latitude         = latitude;
+        this.longitude        = longitude;
+        this.startedAt        = startedAt;
+        this.address          = address;
+        this.ownerNickname    = ownerNickname;
         this.ownerDisplayName = ownerDisplayName;
-        this.hashTag = hashTag;
-        this.eventType = eventType;
+        this.hashTag          = hashTag;
+        this.eventType        = eventType;
     }
 
     public boolean isSuccess() {
@@ -95,16 +96,16 @@ public class SearchResultBus {
         this.catchMsg = catchMsg;
     }
 
+    public String getLatitude() {
+        return latitude;
+    }
+
     public String getEventPlace() {
         return eventPlace;
     }
 
     public void setEventPlace(String eventPlace) {
         this.eventPlace = eventPlace;
-    }
-
-    public String getLatitude() {
-        return latitude;
     }
 
     public void setLatitude(String latitude) {

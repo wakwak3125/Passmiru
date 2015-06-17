@@ -64,8 +64,6 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     static final int INTERNAL_PROGRESS_CONTAINER_ID = 0x00ff0002;
     static final int INTERNAL_LIST_CONTAINER_ID = 0x00ff0003;
 
-    private static final String LOC_SET_MSG = "検索地域を設定します";
-
     @InjectView(R.id.locSettingFAB)
     FloatingActionButton mLocSettingFAB;
 
@@ -106,7 +104,6 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     public void LocationStting() {
         DialogFragment locSettingFragment = new LocationSettingDialog();
         locSettingFragment.show(getChildFragmentManager(),null);
-        // Toast.makeText(context, LOC_SET_MSG, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -136,7 +133,7 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     @Override
     public void onRefresh() {
         Log.d(TAG, "onRefresh");
-        handler.postDelayed(Refreshing, 2000);
+        handler.postDelayed(Refreshing, 1000);
     }
 
     private void updateList(EventListAdapter adapter) {
@@ -192,18 +189,15 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
 
         if (loading) {
             if (totalItemCount > previousTotal) {
-                Log.d(TAG, "totalItemCount   = " + totalItemCount);
-                Log.d(TAG, "previousTotal = " + previousTotal);
                 previousTotal = totalItemCount;
                 loading = false;
             }
         }
         if (!loading && totalItemCount == visibleItemCount + firstVisibleItem) {
-            Log.d("onScroll", "Loading......");
+            Log.i("onScroll", "Loading......");
             int start = adapter.getCount() + 1;
             eventsRequest = new EventsRequest(adapter);
-            eventsRequest.getEvents(start, 3, 1);
-            adapter.notifyDataSetChanged();
+            eventsRequest.getEvents(start, 3, 3);
             loading = true;
         }
     }
@@ -233,10 +227,10 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        Event event = (Event)l.getItemAtPosition(position);
-        int eventID = event.getEvent_id();
-        String imgUrl = event.getImgUrl();
-        eventDetailRequest.getEventDetail(eventID, imgUrl);
+        Event event     = (Event)l.getItemAtPosition(position);
+        int eventID     = event.getEvent_id();
+        String imgUrl   = event.getImgUrl();
+        eventDetailRequest.getEventDetail(eventID, imgUrl, 1);
 
         Log.d(TAG, "TITLE = " + event.getTitle());
 
@@ -273,21 +267,21 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
 
     public void onEvent(EventDetailBus detailBus) {
         if (detailBus.isSuccess()) {
-            String eventId = String.valueOf(detailBus.getEventId());
-            String description = detailBus.getDescription();
-            String imgUrl = detailBus.getImgUrl();
-            String title = detailBus.getEventTitle();
-            String updated_at = detailBus.getUpdated_at();
-            String catchMsg = detailBus.getCatchMsg();
-            String eventPlace = detailBus.getEventPlace();
-            String lat = detailBus.getLatitude();
-            String lon = detailBus.getLongitude();
-            String startedAt = detailBus.getStartedAt();
-            String address = detailBus.getAddress();
-            String ownerNickName = detailBus.getOwnerNickname();
+            String eventId          = String.valueOf(detailBus.getEventId());
+            String description      = detailBus.getDescription();
+            String imgUrl           = detailBus.getImgUrl();
+            String title            = detailBus.getEventTitle();
+            String updated_at       = detailBus.getUpdated_at();
+            String catchMsg         = detailBus.getCatchMsg();
+            String eventPlace       = detailBus.getEventPlace();
+            String lat              = detailBus.getLatitude();
+            String lon              = detailBus.getLongitude();
+            String startedAt        = detailBus.getStartedAt();
+            String address          = detailBus.getAddress();
+            String ownerNickName    = detailBus.getOwnerNickname();
             String ownerDisplayName = detailBus.getOwnerDisplayName();
-            String hashTag = detailBus.getHashTag();
-            String eventType = detailBus.getEventType();
+            String hashTag          = detailBus.getHashTag();
+            String eventType        = detailBus.getEventType();
 
             Intent intent = new Intent(AppController.getContext(), EventDetailActivity.class);
             intent.putExtra("eventID", eventId);
@@ -305,7 +299,6 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
             intent.putExtra("ownerDisplayName", ownerDisplayName);
             intent.putExtra("hashTag", hashTag);
             intent.putExtra("eventType", eventType);
-
             startActivity(intent);
 
         } else {

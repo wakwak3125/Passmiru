@@ -4,7 +4,7 @@
     xmlns:cardview="http://schemas.android.com/tools"
     android:id="@+id/cardView"
     android:layout_width="match_parent"
-    android:layout_height="158dp"
+    android:layout_height="168dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:padding="8dp"
     card_view:cardCornerRadius="0dp"

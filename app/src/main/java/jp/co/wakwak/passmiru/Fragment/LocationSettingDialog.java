@@ -75,8 +75,8 @@ public class LocationSettingDialog extends DialogFragment implements AdapterView
         mPrefList.setItemsCanFocus(false);
         mPrefList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 
+        Boolean checked;
         for (int i = 0; i < prefList.length; i++) {
-            Boolean checked;
             checked = preferences.getBoolean(String.valueOf(mPrefList.getItemAtPosition(i)), false);
             mPrefList.setItemChecked(i, checked);
         }
@@ -113,7 +113,7 @@ public class LocationSettingDialog extends DialogFragment implements AdapterView
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
+                                // なにもしない。
                             }
                         });
         return builder.create();

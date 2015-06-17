@@ -3,6 +3,7 @@ package jp.co.wakwak.passmiru.ApiManage;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -17,7 +18,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import jp.co.wakwak.passmiru.Adapter.CreatedEventListAdapter;
 import jp.co.wakwak.passmiru.Adapter.JoinEventListAdapter;
@@ -75,6 +80,17 @@ public class UserEventRequest {
                                 String owner_nickname = event.getString("owner_nickname");
                                 String updated_at = event.getString("updated_at");
 
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.JAPANESE);
+                                Date date = null;
+
+                                try {
+                                    date = sdf.parse(updated_at);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+                                updated_at = sdf.format(date);
+
                                 joinEvent = new JoinEvent();
                                 joinEvent.setEvent_id(event_id);
                                 joinEvent.setTitle(title);
@@ -87,7 +103,6 @@ public class UserEventRequest {
                                 JoinEventHtmlParseTask task = new JoinEventHtmlParseTask(joinEvent, event_url, joinEventListAdapter);
                                 task.execute();
                                 joinEventsArrayList.add(joinEvent);
-                                // EventBus.getDefault().post(new UserEventBus(true, eventId, eventTitle));
                             }
                             joinEventListAdapter.addAll(joinEventsArrayList);
                         } catch (JSONException e) {
@@ -125,6 +140,17 @@ public class UserEventRequest {
                                 String accepted = event.getString("accepted");
                                 String owner_nickname = event.getString("owner_nickname");
                                 String updated_at = event.getString("updated_at");
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.JAPANESE);
+                                Date date = null;
+
+                                try {
+                                    date = sdf.parse(updated_at);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+                                updated_at = sdf.format(date);
 
                                 createdEvent = new CreatedEvent();
                                 createdEvent.setEvent_id(event_id);

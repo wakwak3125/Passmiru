@@ -69,6 +69,8 @@ public class JoinEventListAdapter extends ArrayAdapter<JoinEvent> {
         holder.mAccepted.setText(joinEvent.getAccepted());
         holder.mOwnerNickname.setText(joinEvent.getOwner_nickname());
         holder.mUpdateDate.setText(joinEvent.getUpdated_at());
+        holder.mListImage.setDefaultImageResId(R.drawable.noimage);
+        holder.mListImage.setErrorImageResId(R.drawable.noimage);
         holder.mListImage.setImageUrl(joinEvent.getImgUrl(), AppController.getInstance().getImageLoader());
 
         return convertView;

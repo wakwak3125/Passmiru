@@ -3,6 +3,7 @@ package jp.co.wakwak.passmiru;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +13,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.google.android.gms.games.event.EventBuffer;
@@ -27,8 +29,10 @@ import jp.co.wakwak.passmiru.Data.Event;
 import jp.co.wakwak.passmiru.Fragment.CreatedEventListFragment;
 import jp.co.wakwak.passmiru.Fragment.EventListFragment;
 import jp.co.wakwak.passmiru.Fragment.JoinEventListFragment;
+import jp.co.wakwak.passmiru.Fragment.LocationSettingDialog;
 import jp.co.wakwak.passmiru.Fragment.SearchResultListFragment;
 import jp.co.wakwak.passmiru.Fragment.UserEventFragment;
+import jp.co.wakwak.passmiru.Fragment.UserIDSettingDialog;
 
 
 public class MainActivity extends AppCompatActivity
@@ -94,12 +98,12 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
         });
+
         return true;
     }
 
@@ -111,10 +115,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        switch (id) {
+            case (R.id.action_settings):
+                DialogFragment userIDSetDialog = new UserIDSettingDialog();
+                userIDSetDialog.show(getSupportFragmentManager(),null);
+                return true;
 
+            case (R.id.about_this_app):
+                return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

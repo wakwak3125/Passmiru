@@ -65,4 +65,5 @@ dependencies {
     compile 'com.google.android.gms:play-services:7.3.0'
     compile 'com.deploygate:sdk:3.1'
     compile 'com.beardedhen:androidbootstrap:1.2.2'
+    compile 'org.apache.commons:commons-lang3:3.4'
 }

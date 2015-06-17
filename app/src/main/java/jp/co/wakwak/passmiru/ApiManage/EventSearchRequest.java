@@ -1,6 +1,7 @@
 package jp.co.wakwak.passmiru.ApiManage;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -16,7 +17,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.SearchResultListAdapter;
@@ -57,6 +62,17 @@ public class EventSearchRequest {
                                 String accepted = searchResult.getString("accepted");
                                 String owner_nickname = searchResult.getString("owner_nickname");
                                 String updated_at = searchResult.getString("updated_at");
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.JAPANESE);
+                                Date date = null;
+
+                                try {
+                                    date = sdf.parse(updated_at);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+                                updated_at = sdf.format(date);
 
                                 result = new SearchResult();
                                 result.setEvent_id(event_id);

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 
@@ -26,8 +27,9 @@ import jp.co.wakwak.passmiru.R;
 public class UserNameEditFragment extends Fragment {
 
     private SharedPreferences sharedPreferences;
-    private static final String PREF_KEY = "USER_NAME";
-    private static final String KEY_USER_NAME = "name";
+    private static final String PREF_KEY        = "USER_NAME";
+    private static final String KEY_USER_NAME   = "name";
+    private static final String EDIT_TEXT_WARN  = "IDが空白です";
 
     private Context context = AppController.getContext();
 
@@ -59,13 +61,20 @@ public class UserNameEditFragment extends Fragment {
     @OnClick(R.id.submitButton)
     public void Edit() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(KEY_USER_NAME, mUserNameEdit.getText().toString());
-        editor.apply();
-        EventBus.getDefault().post(new HideFragmentBus(true));
-        DestroyMySelf();
+
+        String userId = mUserNameEdit.getText().toString();
+
+        if (userId.equals("") || userId.isEmpty() || userId.contains(" ") || userId.length() == 0) {
+            Toast.makeText(context, EDIT_TEXT_WARN, Toast.LENGTH_SHORT).show();
+        } else {
+            editor.putString(KEY_USER_NAME, mUserNameEdit.getText().toString());
+            editor.apply();
+            EventBus.getDefault().post(new HideFragmentBus(true));
+            DestroyMySelf();
+        }
     }
 
     public void DestroyMySelf() {
-        getFragmentManager().beginTransaction().remove(this).commit();
+        getFragmentManager().beginTransaction().remove(UserNameEditFragment.this).commit();
     }
 }

@@ -1,7 +1,7 @@
 package jp.co.wakwak.passmiru.Bus;
 
-public class SearchResultBus {
-    final static String TAG = SearchResultBus.class.getSimpleName();
+public class CreatedEventDetailBus {
+    final static String TAG = CreatedEventDetailBus.class.getSimpleName();
 
     private boolean success;
     private int eventId;
@@ -20,7 +20,8 @@ public class SearchResultBus {
     private String hashTag;
     private String eventType;
 
-    public SearchResultBus(boolean success, int eventId, String eventTitle, String description, String imgUrl, String updated_at, String catchMsg, String eventPlace, String latitude, String longitude, String startedAt, String address, String ownerNickname, String ownerDisplayName, String hashTag, String eventType) {
+    public CreatedEventDetailBus(boolean success, int eventId, String eventTitle, String description, String imgUrl, String updated_at, String catchMsg, String eventPlace, String latitude, String longitude, String startedAt,
+                                 String address, String ownerNickname, String ownerDisplayName, String hashTag, String eventType) {
         this.success = success;
         this.eventId = eventId;
         this.eventTitle = eventTitle;
@@ -38,6 +39,7 @@ public class SearchResultBus {
         this.hashTag = hashTag;
         this.eventType = eventType;
     }
+
 
     public boolean isSuccess() {
         return success;
@@ -95,16 +97,16 @@ public class SearchResultBus {
         this.catchMsg = catchMsg;
     }
 
+    public String getLatitude() {
+        return latitude;
+    }
+
     public String getEventPlace() {
         return eventPlace;
     }
 
     public void setEventPlace(String eventPlace) {
         this.eventPlace = eventPlace;
-    }
-
-    public String getLatitude() {
-        return latitude;
     }
 
     public void setLatitude(String latitude) {

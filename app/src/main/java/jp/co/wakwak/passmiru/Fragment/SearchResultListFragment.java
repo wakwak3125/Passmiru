@@ -19,8 +19,8 @@ import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.SearchResultListAdapter;
+import jp.co.wakwak.passmiru.ApiManage.EventDetailRequest;
 import jp.co.wakwak.passmiru.ApiManage.EventSearchRequest;
-import jp.co.wakwak.passmiru.ApiManage.SearchResultDetailRequest;
 import jp.co.wakwak.passmiru.Bus.ResultListShowBus;
 import jp.co.wakwak.passmiru.Bus.SearchResultBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
@@ -28,22 +28,23 @@ import jp.co.wakwak.passmiru.Data.SearchResult;
 import jp.co.wakwak.passmiru.EventDetailActivity;
 import jp.co.wakwak.passmiru.R;
 
+@SuppressWarnings("ResourceType")
 public class SearchResultListFragment extends ListFragment implements AbsListView.OnScrollListener {
 
-    private static final String TAG = SearchResultListFragment.class.getSimpleName();
-    private static final String KEY_WORD = "KEY_WORD";
+    private static final String TAG         = SearchResultListFragment.class.getSimpleName();
+    private static final String KEY_WORD    = "KEY_WORD";
 
     private String mKeyword;
     private OnFragmentInteractionListener mListener;
 
     private EventSearchRequest searchRequest;
-    private SearchResultDetailRequest detailRequest;
+    private EventDetailRequest detailRequest;
 
     private SearchResultListAdapter adapter;
     private ListView mListView;
 
-    static final int INTERNAL_PROGRESS_CONTAINER_ID = 0x00ff0002;
-    static final int INTERNAL_LIST_CONTAINER_ID = 0x00ff0003;
+    static final int INTERNAL_PROGRESS_CONTAINER_ID  = 0x00ff0002;
+    static final int INTERNAL_LIST_CONTAINER_ID      = 0x00ff0003;
 
     private View mFooter;
     private boolean loading = true;
@@ -66,9 +67,8 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
         if (getArguments() != null) {
             mKeyword = getArguments().getString(KEY_WORD);
         } else {
-            Log.d(TAG, "検索単語が設定されていません");
+            Log.i(TAG, "検索単語が設定されていません");
         }
-
     }
 
     @Override
@@ -106,7 +106,7 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
         searchRequest = new EventSearchRequest(adapter);
         searchRequest.getSearchResult(1, 3, mKeyword);
 
-        detailRequest = new SearchResultDetailRequest();
+        detailRequest = new EventDetailRequest();
     }
 
     @Override
@@ -130,9 +130,9 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         SearchResult result = (SearchResult)l.getItemAtPosition(position);
-        int eventID = result.getEvent_id();
-        String imgUrl = result.getImgUrl();
-        detailRequest.getEventDetail(eventID, imgUrl);
+        int eventID         = result.getEvent_id();
+        String imgUrl       = result.getImgUrl();
+        detailRequest.getEventDetail(eventID, imgUrl, 2);
     }
 
     @Override
@@ -194,6 +194,7 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
             String ownerNickName = resultBus.getOwnerNickname();
             String ownerDisplayName = resultBus.getOwnerDisplayName();
             String hashTag = resultBus.getHashTag();
+            String eventType = resultBus.getEventType();
 
             Intent intent = new Intent(AppController.getContext(), EventDetailActivity.class);
             intent.putExtra("description", description);
@@ -209,6 +210,7 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
             intent.putExtra("ownerNickName", ownerNickName);
             intent.putExtra("ownerDisplayName", ownerDisplayName);
             intent.putExtra("hashTag", hashTag);
+            intent.putExtra("eventType", eventType);
 
             startActivity(intent);
 

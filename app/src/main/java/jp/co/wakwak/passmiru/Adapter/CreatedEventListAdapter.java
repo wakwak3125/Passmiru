@@ -69,6 +69,8 @@ public class CreatedEventListAdapter extends ArrayAdapter<CreatedEvent> {
         holder.mAccepted.setText(createdEvent.getAccepted());
         holder.mOwnerNickname.setText(createdEvent.getOwner_nickname());
         holder.mUpdateDate.setText(createdEvent.getUpdated_at());
+        holder.mListImage.setDefaultImageResId(R.drawable.noimage);
+        holder.mListImage.setErrorImageResId(R.drawable.noimage);
         holder.mListImage.setImageUrl(createdEvent.getImgUrl(), AppController.getInstance().getImageLoader());
 
         return convertView;

@@ -2,6 +2,7 @@ package jp.co.wakwak.passmiru.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -18,10 +20,13 @@ import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.JoinEventListAdapter;
 import jp.co.wakwak.passmiru.ApiManage.EventDetailRequest;
 import jp.co.wakwak.passmiru.ApiManage.UserEventRequest;
+import jp.co.wakwak.passmiru.Bus.EventDetailBus;
 import jp.co.wakwak.passmiru.Bus.HideFragmentBus;
 import jp.co.wakwak.passmiru.Bus.RelodeJoinListBus;
+import jp.co.wakwak.passmiru.Bus.UserEventDetailBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.JoinEvent;
+import jp.co.wakwak.passmiru.EventDetailActivity;
 import jp.co.wakwak.passmiru.R;
 
 public class JoinEventListFragment extends ListFragment {
@@ -116,6 +121,10 @@ public class JoinEventListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+        JoinEvent joinEvent = (JoinEvent)l.getItemAtPosition(position);
+        int eventID         = joinEvent.getEvent_id();
+        String imgUrl       = joinEvent.getImgUrl();
+        eventDetailRequest.getEventDetail(eventID, imgUrl, 3);
     }
 
     public interface OnFragmentInteractionListener {
@@ -159,4 +168,46 @@ public class JoinEventListFragment extends ListFragment {
             ft.commit();
         }
     }
+
+    public void onEvent(UserEventDetailBus detailBus) {
+        if (detailBus.isSuccess()) {
+            String eventId          = String.valueOf(detailBus.getEventId());
+            String description      = detailBus.getDescription();
+            String imgUrl           = detailBus.getImgUrl();
+            String title            = detailBus.getEventTitle();
+            String updated_at       = detailBus.getUpdated_at();
+            String catchMsg         = detailBus.getCatchMsg();
+            String eventPlace       = detailBus.getEventPlace();
+            String lat              = detailBus.getLatitude();
+            String lon              = detailBus.getLongitude();
+            String startedAt        = detailBus.getStartedAt();
+            String address          = detailBus.getAddress();
+            String ownerNickName    = detailBus.getOwnerNickname();
+            String ownerDisplayName = detailBus.getOwnerDisplayName();
+            String hashTag          = detailBus.getHashTag();
+            String eventType        = detailBus.getEventType();
+
+            Intent intent = new Intent(AppController.getContext(), EventDetailActivity.class);
+            intent.putExtra("eventID", eventId);
+            intent.putExtra("description", description);
+            intent.putExtra("imgUrl", imgUrl);
+            intent.putExtra("title", title);
+            intent.putExtra("updated_at", updated_at);
+            intent.putExtra("catch", catchMsg);
+            intent.putExtra("eventPlace", eventPlace);
+            intent.putExtra("lat", lat);
+            intent.putExtra("lon", lon);
+            intent.putExtra("startedAt", startedAt);
+            intent.putExtra("address", address);
+            intent.putExtra("ownerNickName", ownerNickName);
+            intent.putExtra("ownerDisplayName", ownerDisplayName);
+            intent.putExtra("hashTag", hashTag);
+            intent.putExtra("eventType", eventType);
+            startActivity(intent);
+
+        } else {
+            Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

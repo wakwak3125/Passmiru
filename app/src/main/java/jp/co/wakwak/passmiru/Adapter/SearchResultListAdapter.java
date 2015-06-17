@@ -70,6 +70,8 @@ public class SearchResultListAdapter extends ArrayAdapter<SearchResult> {
         holder.accepted.setText(result.getAccepted());
         holder.ownerNickname.setText(result.getOwner_nickname());
         holder.updateDate.setText(result.getUpdated_at());
+        holder.listImage.setDefaultImageResId(R.drawable.noimage);
+        holder.listImage.setErrorImageResId(R.drawable.noimage);
         holder.listImage.setImageUrl(result.getImgUrl(), AppController.getInstance().getImageLoader());
 
         return convertView;
