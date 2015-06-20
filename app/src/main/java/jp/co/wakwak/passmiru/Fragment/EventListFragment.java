@@ -73,6 +73,11 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         EventBus.getDefault().register(this);
     }
 
@@ -133,13 +138,17 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     @Override
     public void onRefresh() {
         Log.d(TAG, "onRefresh");
-        handler.postDelayed(Refreshing, 1000);
+        handler.postDelayed(Refreshing, 500);
     }
 
     private void updateList(EventListAdapter adapter) {
-        // mFooter.setVisibility(View.INVISIBLE);
         eventsRequest = new EventsRequest(adapter);
         eventsRequest.getEvents(1, 3, 2);
+    }
+
+    private void changePrefecture(EventListAdapter adapter) {
+        eventsRequest = new EventsRequest(adapter);
+        eventsRequest.getEvents(1, 3, 4);
     }
 
     private Runnable Refreshing = new Runnable() {
@@ -150,33 +159,9 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
     };
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -261,7 +246,9 @@ public class EventListFragment extends ListFragment implements AbsListView.OnScr
 
     public void onEvent(PrefcSetResultBus prefcSetResultBus) {
         if (prefcSetResultBus.isSuccess()) {
-            updateList(adapter);
+            setListShown(false);
+            mLocSettingFAB.setVisibility(View.GONE);
+            changePrefecture(adapter);
         }
     }
 

@@ -60,6 +60,12 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
@@ -164,6 +170,13 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
             loading = true;
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

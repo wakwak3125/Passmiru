@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 
 
@@ -50,6 +51,13 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
     private Double lon;
     private String eventID;
     private String eventType;
+
+    public static final String ADVERTISEMENT = "advertisement";
+    public static final String ADV_TOAST_MSG = "参加方法は主催者の説明をご確認ください。";
+    public static final String ADV_BTN_MSG   = "connpassでの参加受付なし";
+
+    // テスト用のKEY
+    private final static String participate = "";
 
     @InjectView(R.id.title)
     TextView mTitle;
@@ -79,6 +87,8 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
     BootstrapButton mOpenBrowserButton;
     @InjectView(R.id.joinButton)
     BootstrapButton mJoinButton;
+    @InjectView(R.id.participateWebView)
+    WebView mParticipateWv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,6 +195,11 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         mWebView.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));
         mWebView.loadData(description, "text/html;charset=utf-8", "utf-8");
 
+        // 募集内容表示用WebView
+        mParticipateWv.getSettings();
+        mParticipateWv.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));
+        mParticipateWv.loadData(participate, "text/html;charset=utf-8", "utf-8");
+
         // ブラウザで開くボタン
         mOpenBrowserButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,9 +212,8 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
 
         // イベントタイプが告知のみの場合の処理
         // ボタンのテキストを変更し、ユーザーに通知する。
-        if(eventType.equals("advertisement")) {
-            mJoinButton.setText("connpassでの参加受付なし");
-            // mJoinButton.setBootstrapButtonEnabled(false);
+        if(eventType.equals(ADVERTISEMENT)) {
+            mJoinButton.setText(ADV_BTN_MSG);
         }
 
         // 参加ページにとぶボタン
@@ -207,8 +221,8 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         mJoinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(eventType.equals("advertisement")) {
-                    Toast.makeText(AppController.getContext(),"このイベントはconnpassでの参加受付を行っておりません。",
+                if(eventType.equals(ADVERTISEMENT)) {
+                    Toast.makeText(AppController.getContext(),ADV_TOAST_MSG,
                             Toast.LENGTH_SHORT).show();
                 } else {
                     Uri uri = Uri.parse("http://connpass.com/event/" + eventID + "/" + "join/");
@@ -225,6 +239,13 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         MapView mMap = (MapView) findViewById(R.id.map);
         mMap.onResume();
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MapView mMap = (MapView) findViewById(R.id.map);
+        mMap.onPause();
     }
 
     @Override
@@ -279,8 +300,6 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         float alpha3 = 1 - (float) Math.max(0, mParallaxImageHeight - scrollY) / mParallaxImageHeight;
 
         toolbar.setBackgroundColor(ScrollUtils.getColorWithAlpha(alpha1, baseColor));
-/*        toolbar.setTitleTextColor(ScrollUtils.getColorWithAlpha(alpha2, baseTextColor));*/
-/*        toolbar.setSubtitleTextColor(ScrollUtils.getColorWithAlpha(alpha3, baseTextColor));*/
         ViewHelper.setTranslationY(mEventImage, scrollY / 2);
     }
 

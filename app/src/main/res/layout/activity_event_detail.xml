@@ -31,6 +31,10 @@
                     layout="@layout/detail_card_top" />
 
                 <include
+                    android:id="@+id/participateCard"
+                    layout="@layout/perticipate_card_webview"/>
+
+                <include
                     android:id="@+id/detailCardInfo"
                     layout="@layout/detail_card_info" />
 

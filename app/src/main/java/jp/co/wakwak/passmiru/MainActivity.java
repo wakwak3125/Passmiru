@@ -31,6 +31,7 @@ import jp.co.wakwak.passmiru.Fragment.EventListFragment;
 import jp.co.wakwak.passmiru.Fragment.JoinEventListFragment;
 import jp.co.wakwak.passmiru.Fragment.LocationSettingDialog;
 import jp.co.wakwak.passmiru.Fragment.SearchResultListFragment;
+import jp.co.wakwak.passmiru.Fragment.ThisAppFragment;
 import jp.co.wakwak.passmiru.Fragment.UserEventFragment;
 import jp.co.wakwak.passmiru.Fragment.UserIDSettingDialog;
 
@@ -68,7 +69,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
-        EventBus.getDefault().isRegistered(this);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("passmiru");
@@ -108,6 +108,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -122,6 +134,8 @@ public class MainActivity extends AppCompatActivity
                 return true;
 
             case (R.id.about_this_app):
+                DialogFragment thisAppFragment = new ThisAppFragment();
+                thisAppFragment.show(getSupportFragmentManager(),null);
                 return true;
         }
         return super.onOptionsItemSelected(item);

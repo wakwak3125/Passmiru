@@ -99,6 +99,11 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
             HideEditFragment();
             userInformationScraper = new UserInformationScraper(userName);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         EventBus.getDefault().register(this);
     }
 
@@ -139,6 +144,13 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
 
     @Override
     public void onDestroyView() {

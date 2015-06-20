@@ -1,6 +1,5 @@
 package jp.co.wakwak.passmiru.ApiManage;
 
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -9,12 +8,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -37,7 +34,7 @@ public class EventDetailRequest {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "RESPONSE = " + response);
+                        Log.i(TAG, "RESPONSE = " + response);
 
                         try {
                             JSONArray userEvents = response.getJSONArray("events");
@@ -58,12 +55,7 @@ public class EventDetailRequest {
                                 String hashTag          = event.getString("hash_tag");
                                 String eventType        = event.getString("event_type");
 
-
-
-                                // TODO: 日付のフォーマット処理を書く。
-                                Log.i(TAG, startedAt);
                                 Date date;
-                                FastDateFormat fastDateFormat = DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT;
                                 try {
                                     String ptrn1 = DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.getPattern();
                                     date = org.apache.commons.lang3.time.DateUtils.parseDate(startedAt, ptrn1);

@@ -124,6 +124,13 @@ public class EventsRequest {
                                 // スクロールで追加読み込みの時こっち
                                 adapter.addAll(events);
                                 adapter.notifyDataSetChanged();
+                            } else if (calledBy == 4) {
+                                // 検索エリアかえたときこっち
+                                adapter.clear();
+                                adapter.addAll(events);
+                                adapter.notifyDataSetChanged();
+                                EventBus.getDefault().post(new ListShowBus(true));
+                                EventBus.getDefault().post(new SwipeFinishBus(true));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

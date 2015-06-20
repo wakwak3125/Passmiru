@@ -53,6 +53,11 @@ public class JoinEventListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         EventBus.getDefault().register(this);
     }
 
@@ -66,7 +71,6 @@ public class JoinEventListFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         // ユーザー作成イベントリストの初期化
         joinEvents              = new ArrayList<JoinEvent>();
 
@@ -111,6 +115,13 @@ public class JoinEventListFragment extends ListFragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
 
     @Override
     public void onDetach() {

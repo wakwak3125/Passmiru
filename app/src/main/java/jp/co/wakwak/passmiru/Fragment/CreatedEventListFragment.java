@@ -2,6 +2,7 @@ package jp.co.wakwak.passmiru.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,15 +13,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
 import jp.co.wakwak.passmiru.Adapter.CreatedEventListAdapter;
 import jp.co.wakwak.passmiru.ApiManage.EventDetailRequest;
 import jp.co.wakwak.passmiru.ApiManage.UserEventRequest;
+import jp.co.wakwak.passmiru.Bus.CreatedEventDetailBus;
 import jp.co.wakwak.passmiru.Bus.HideFragmentBus;
+import jp.co.wakwak.passmiru.Bus.UserEventDetailBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.Data.CreatedEvent;
+import jp.co.wakwak.passmiru.Data.JoinEvent;
+import jp.co.wakwak.passmiru.EventDetailActivity;
 import jp.co.wakwak.passmiru.R;
 
 public class CreatedEventListFragment extends ListFragment {
@@ -29,6 +36,7 @@ public class CreatedEventListFragment extends ListFragment {
 
     private CreatedEventListAdapter         createdEventListAdapter;
     private UserEventRequest                userEventRequest;
+    private EventDetailRequest              eventDetailRequest;
 
     private Context                         context         = AppController.getContext();
 
@@ -54,26 +62,30 @@ public class CreatedEventListFragment extends ListFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setListAdapter(createdEventListAdapter);
         // ユーザー作成イベントリストの初期化
-        ArrayList<CreatedEvent> createdEvents = new ArrayList<CreatedEvent>();
+        ArrayList<CreatedEvent> createdEvents   = new ArrayList<CreatedEvent>();
         // イベントの詳細情報取得リクエストの初期化
-        EventDetailRequest eventDetailRequest = new EventDetailRequest();
+        eventDetailRequest                      = new EventDetailRequest();
         // アダプターの初期化
-        createdEventListAdapter = new CreatedEventListAdapter(context, createdEvents);
+        createdEventListAdapter                 = new CreatedEventListAdapter(context, createdEvents);
         // アダプターをセット
         setListAdapter(createdEventListAdapter);
         // ユーザー情報に基づくイベントリクエストの初期化
-        userEventRequest = new UserEventRequest(createdEventListAdapter);
+        userEventRequest                        = new UserEventRequest(createdEventListAdapter);
         // ユーザーが作成したイベントのリクエストを実行
-
-        SharedPreferences preferences = getActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
-        String userName = preferences.getString(KEY_USER_NAME, null);
+        SharedPreferences preferences           = getActivity().getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
+        String userName                         = preferences.getString(KEY_USER_NAME, null);
 
         if (userName == null || userName.isEmpty() || userName.equals("")) {
-            // 何もしない
             System.out.println("USER NAME IS NULL OR EMPTY.");
         } else {
             userEventRequest.getCreatedEvent();
@@ -106,6 +118,11 @@ public class CreatedEventListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+
+        CreatedEvent createdEvent = (CreatedEvent)l.getItemAtPosition(position);
+        int eventID               = createdEvent.getEvent_id();
+        String imgUrl             = createdEvent.getImgUrl();
+        eventDetailRequest.getEventDetail(eventID, imgUrl, 4);
     }
 
     public interface OnFragmentInteractionListener {
@@ -149,4 +166,52 @@ public class CreatedEventListFragment extends ListFragment {
             ft.commit();
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onEvent(CreatedEventDetailBus detailBus) {
+        if (detailBus.isSuccess()) {
+            String eventId          = String.valueOf(detailBus.getEventId());
+            String description      = detailBus.getDescription();
+            String imgUrl           = detailBus.getImgUrl();
+            String title            = detailBus.getEventTitle();
+            String updated_at       = detailBus.getUpdated_at();
+            String catchMsg         = detailBus.getCatchMsg();
+            String eventPlace       = detailBus.getEventPlace();
+            String lat              = detailBus.getLatitude();
+            String lon              = detailBus.getLongitude();
+            String startedAt        = detailBus.getStartedAt();
+            String address          = detailBus.getAddress();
+            String ownerNickName    = detailBus.getOwnerNickname();
+            String ownerDisplayName = detailBus.getOwnerDisplayName();
+            String hashTag          = detailBus.getHashTag();
+            String eventType        = detailBus.getEventType();
+
+            Intent intent = new Intent(AppController.getContext(), EventDetailActivity.class);
+            intent.putExtra("eventID", eventId);
+            intent.putExtra("description", description);
+            intent.putExtra("imgUrl", imgUrl);
+            intent.putExtra("title", title);
+            intent.putExtra("updated_at", updated_at);
+            intent.putExtra("catch", catchMsg);
+            intent.putExtra("eventPlace", eventPlace);
+            intent.putExtra("lat", lat);
+            intent.putExtra("lon", lon);
+            intent.putExtra("startedAt", startedAt);
+            intent.putExtra("address", address);
+            intent.putExtra("ownerNickName", ownerNickName);
+            intent.putExtra("ownerDisplayName", ownerDisplayName);
+            intent.putExtra("hashTag", hashTag);
+            intent.putExtra("eventType", eventType);
+            startActivity(intent);
+
+        } else {
+            Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
