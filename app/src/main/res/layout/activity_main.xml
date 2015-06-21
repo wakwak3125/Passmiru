@@ -18,6 +18,7 @@
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <com.astuetz.PagerSlidingTabStrip
+        android:background="@drawable/shadowhigh"
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="48dp"

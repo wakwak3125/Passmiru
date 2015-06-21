@@ -68,7 +68,6 @@ public class SearchResultListFragment extends ListFragment implements AbsListVie
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
 
         if (getArguments() != null) {
             mKeyword = getArguments().getString(KEY_WORD);

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,9 +57,6 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
     public static final String ADV_TOAST_MSG = "参加方法は主催者の説明をご確認ください。";
     public static final String ADV_BTN_MSG   = "connpassでの参加受付なし";
 
-    // テスト用のKEY
-    private final static String participate = "";
-
     @InjectView(R.id.title)
     TextView mTitle;
     @InjectView(R.id.catchMsg)
@@ -87,8 +85,6 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
     BootstrapButton mOpenBrowserButton;
     @InjectView(R.id.joinButton)
     BootstrapButton mJoinButton;
-    @InjectView(R.id.participateWebView)
-    WebView mParticipateWv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,11 +190,6 @@ public class EventDetailActivity extends AppCompatActivity implements Observable
         mWebView.getSettings();
         mWebView.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));
         mWebView.loadData(description, "text/html;charset=utf-8", "utf-8");
-
-        // 募集内容表示用WebView
-        mParticipateWv.getSettings();
-        mParticipateWv.setBackgroundColor(getResources().getColor(R.color.cardview_light_background));
-        mParticipateWv.loadData(participate, "text/html;charset=utf-8", "utf-8");
 
         // ブラウザで開くボタン
         mOpenBrowserButton.setOnClickListener(new View.OnClickListener() {
