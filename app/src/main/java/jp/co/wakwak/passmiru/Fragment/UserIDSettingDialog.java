@@ -21,6 +21,7 @@ import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
+import jp.co.wakwak.passmiru.Bus.DestroyBus;
 import jp.co.wakwak.passmiru.Bus.HideFragmentBus;
 import jp.co.wakwak.passmiru.Bus.PrefcSetResultBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
@@ -83,11 +84,9 @@ public class UserIDSettingDialog extends DialogFragment implements AdapterView.O
                     editor.clear();
                     editor.putString(KEY_USER_NAME, mUserNameEdit.getText().toString());
                     editor.apply();
-
                     EventBus.getDefault().post(new HideFragmentBus(true));
-                    userNameEditFragment.DestroyMySelf();
+                    EventBus.getDefault().post(new DestroyBus(true));
                 }
-
             }
         }).setNegativeButton(NEGATIVE_BUTTON, null);
         return builder.create();

@@ -4,6 +4,7 @@ package jp.co.wakwak.passmiru.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
@@ -172,7 +173,12 @@ public class UserEventFragment extends Fragment implements TabHost.OnTabChangeLi
         if (infoBus.isSuccess()) {
             mProfileName.setText(infoBus.getUserName());
             mProfileDescription.setText(infoBus.getProfileDescription());
-            Picasso.with(AppController.getContext()).load(infoBus.getProfileImgUrl()).transform(new CircleTransform()).into(mProfileImage);
+            try {
+                Picasso.with(AppController.getContext()).load(infoBus.getProfileImgUrl()).transform(new CircleTransform()).into(mProfileImage);
+            } catch (Exception e) {
+                Picasso.with(AppController.getContext()).load(R.mipmap.ic_launcher).transform(new CircleTransform()).into(mProfileImage);
+                e.printStackTrace();
+            }
         } else {
             Toast.makeText(AppController.getContext(), "取得できませんでした…", Toast.LENGTH_SHORT).show();
         }

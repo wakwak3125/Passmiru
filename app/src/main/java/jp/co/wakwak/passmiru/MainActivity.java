@@ -110,13 +110,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        //EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
+        //EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -146,11 +146,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void onEvent(HideFragmentBus hideFragmentBus) {
+    /*public void onEvent(HideFragmentBus hideFragmentBus) {
         if (hideFragmentBus.isSuccess()) {
             pagerAdapter.destroyAllItem(pager);
             pagerAdapter.notifyDataSetChanged();
             pager.setAdapter(pagerAdapter);
         }
-    }
+    }*/
 }

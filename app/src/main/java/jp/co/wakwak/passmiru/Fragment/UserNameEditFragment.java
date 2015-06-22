@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
+import jp.co.wakwak.passmiru.Bus.DestroyBus;
 import jp.co.wakwak.passmiru.Bus.HideFragmentBus;
 import jp.co.wakwak.passmiru.Commons.AppController;
 import jp.co.wakwak.passmiru.R;
@@ -51,12 +52,30 @@ public class UserNameEditFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_name_edit, container, false);
         ButterKnife.inject(this, view);
         return view;
 
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
 
     @OnClick(R.id.submitButton)
     public void Edit() {
@@ -67,7 +86,7 @@ public class UserNameEditFragment extends Fragment {
         if (userId.equals("") || userId.isEmpty() || userId.contains(" ") || userId.length() == 0) {
             Toast.makeText(context, EDIT_TEXT_WARN, Toast.LENGTH_SHORT).show();
         } else {
-            editor.putString(KEY_USER_NAME, mUserNameEdit.getText().toString());
+            editor.putString(KEY_USER_NAME, userId);
             editor.apply();
             EventBus.getDefault().post(new HideFragmentBus(true));
             DestroyMySelf();
@@ -75,6 +94,16 @@ public class UserNameEditFragment extends Fragment {
     }
 
     public void DestroyMySelf() {
-        getFragmentManager().beginTransaction().remove(UserNameEditFragment.this).commit();
+        try {
+            getFragmentManager().beginTransaction().remove(UserNameEditFragment.this).commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onEvent(DestroyBus destroyBus) {
+        if (destroyBus.isSuccess()) {
+            getFragmentManager().beginTransaction().remove(UserNameEditFragment.this).commit();
+        }
     }
 }
